@@ -2,6 +2,7 @@ FROM adoptopenjdk:11-jdk-hotspot AS TEMP_BUILD_IMAGE
 ENV APP_HOME=/app
 WORKDIR $APP_HOME
 COPY . ./
+RUN chmod +x gradlew
 RUN ./gradlew build -x test --stacktrace
 
 FROM adoptopenjdk:11-jdk-hotspot
