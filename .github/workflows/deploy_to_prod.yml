@@ -13,7 +13,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: make application-dev.properties
+      - name: Make application.yml
         run: |
           cd ./src/main/resources 
           touch ./application.yml 
