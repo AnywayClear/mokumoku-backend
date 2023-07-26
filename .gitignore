@@ -38,5 +38,5 @@ out/
 
 ### added ###
 .DS_Store
-*.properties
-*.yml
+application.properties
+application.yml
