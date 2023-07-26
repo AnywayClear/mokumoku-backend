@@ -1,4 +1,4 @@
-package com.anywayclear.mokumoku;
+package com.anywayclear;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
