@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Table(name = "Member_Status")
-public class MemberStatusEntity {
+public class MemberStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,5 +22,5 @@ public class MemberStatusEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
-    private MemberEntity memberEntity;
+    private Member member;
 }
