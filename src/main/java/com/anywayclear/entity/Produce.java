@@ -21,7 +21,7 @@ public class Produce {
     private String name;
 
     @Column(nullable = false)
-    private String desc;
+    private String description;
 
     @Column(nullable = false)
     private String image;
@@ -45,9 +45,9 @@ public class Produce {
     private int status;
 
     @Builder
-    public Produce(String name, String desc, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status) {
+    public Produce(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status) {
         this.name = name;
-        this.desc = desc;
+        this.description = description;
         this.image = image;
         this.startPrice = startPrice;
         this.kg = kg;
@@ -60,7 +60,7 @@ public class Produce {
     public static Produce toEntity(ProduceCreateRequest request) {
         return Produce.builder()
                 .name(request.getName())
-                .desc(request.getDesc())
+                .description(request.getDescription())
                 .image(request.getImage())
                 .startPrice(request.getStartPrice())
                 .kg(request.getKg())

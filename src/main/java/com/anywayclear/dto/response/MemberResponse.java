@@ -9,7 +9,7 @@ public class MemberResponse {
     private String image;
     private String emailAddress;
     private String phoneNumber;
-    private String desc;
+    private String description;
     private String companyRegistrationNumber;
     private String companyAddress;
 
@@ -19,7 +19,7 @@ public class MemberResponse {
         this.image = image;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.desc = desc;
+        this.description = description;
         this.companyRegistrationNumber = companyRegistrationNumber;
         this.companyAddress = companyAddress;
     }
@@ -30,7 +30,7 @@ public class MemberResponse {
                 .image(member.getImage())
                 .emailAddress(member.getEmailAddress())
                 .phoneNumber(member.getPhoneNumber())
-                .desc(member.getDesc())
+                .desc(member.getDescription())
                 .companyRegistrationNumber(member.getCompanyRegistrationNumber())
                 .companyAddress(member.getCompanyAddress())
                 .build();
