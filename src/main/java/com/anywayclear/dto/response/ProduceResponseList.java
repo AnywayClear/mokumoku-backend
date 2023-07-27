@@ -4,7 +4,6 @@ import com.anywayclear.entity.Produce;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +15,7 @@ public class ProduceResponseList {
 
     public ProduceResponseList(final List<Produce> produceList) {
         this.produceResponseList = produceList.stream()
-                .map((p) -> ProduceResponse.toResponse(p))
+                .map(ProduceResponse::toResponse)
                 .collect(Collectors.toList());
     }
 }
