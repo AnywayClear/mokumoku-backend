@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ProduceResponse {
     private String name;
-    private String desc;
+    private String description;
     private String image;
     private int startPrice;
     private int kg;
@@ -21,9 +21,9 @@ public class ProduceResponse {
     private int status;
 
     @Builder
-    public ProduceResponse(String name, String desc, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate,int status) {
+    public ProduceResponse(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate,int status) {
         this.name = name;
-        this.desc = desc;
+        this.description = description;
         this.image = image;
         this.startPrice = startPrice;
         this.kg = kg;
@@ -36,7 +36,7 @@ public class ProduceResponse {
     public static ProduceResponse toResponse(Produce produce) {
         return ProduceResponse.builder()
                 .name(produce.getImage())
-                .desc(produce.getDesc())
+                .description(produce.getDescription())
                 .image(produce.getImage())
                 .startPrice(produce.getStartPrice())
                 .kg(produce.getKg())

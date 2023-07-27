@@ -30,20 +30,20 @@ public class Member {
 
     private String phoneNumber;
 
-    private String desc;
+    private String description;
 
     private String companyRegistrationNumber;
 
     private String companyAddress;
 
     @Builder
-    public Member(String id, String nickname, String image, String emailAddress, String phoneNumber, String desc, String companyRegistrationNumber, String companyAddress) {
+    public Member(String id, String nickname, String image, String emailAddress, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
         this.id = id;
         this.nickname = nickname;
         this.image = image;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.desc = desc;
+        this.description = description;
         this.companyRegistrationNumber = companyRegistrationNumber;
         this.companyAddress = companyAddress;
     }
@@ -54,7 +54,7 @@ public class Member {
                 .image(request.getImage())
                 .emailAddress(request.getEmailAddress())
                 .phoneNumber(request.getPhoneNumber())
-                .desc(request.getDesc())
+                .description(request.getDescription())
                 .companyRegistrationNumber(request.getCompanyRegistrationNumber())
                 .companyAddress(request.getCompanyAddress())
                 .build();

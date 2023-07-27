@@ -16,7 +16,7 @@ public class ProduceCreateRequest {
 
     @NotBlank
     private String name;
-    private String desc;
+    private String description;
     private String image;
     @NotNull
     private int startPrice;
@@ -32,9 +32,9 @@ public class ProduceCreateRequest {
     private LocalDateTime endDate;
 
     @Builder
-    public ProduceCreateRequest(String name, String desc, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate) {
+    public ProduceCreateRequest(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate) {
         this.name = name;
-        this.desc = desc;
+        this.description = description;
         this.image = image;
         this.startPrice = startPrice;
         this.kg = kg;

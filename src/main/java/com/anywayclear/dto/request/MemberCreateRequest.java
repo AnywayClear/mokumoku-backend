@@ -21,18 +21,18 @@ public class MemberCreateRequest {
     @NotBlank
     private String emailAddress;
     private String phoneNumber;
-    private String desc;
+    private String description;
     private String companyRegistrationNumber;
     private String companyAddress;
 
     @Builder
-    public MemberCreateRequest(int role, String nickname, String image, String emailAddress, String phoneNumber, String desc, String companyRegistrationNumber, String companyAddress) {
+    public MemberCreateRequest(int role, String nickname, String image, String emailAddress, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
         this.role = role;
         this.nickname = nickname;
         this.image = image;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.desc = desc;
+        this.description = description;
         this.companyRegistrationNumber = companyRegistrationNumber;
         this.companyAddress = companyAddress;
     }
