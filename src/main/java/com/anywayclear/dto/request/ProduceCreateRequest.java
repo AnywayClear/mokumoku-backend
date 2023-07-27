@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,16 +18,16 @@ public class ProduceCreateRequest {
     private String name;
     private String desc;
     private String image;
-    @NotBlank
+    @NotNull
     private int startPrice;
-    @NotBlank
+    @NotNull
     private int kg;
-    @NotBlank
+    @NotNull
     private int ea;
-    @NotBlank
+    @NotNull
 //    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") // 기본 형태는 자동 바인딩
     private LocalDateTime startDate;
-    @NotBlank
+    @NotNull
 //    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDate;
 
