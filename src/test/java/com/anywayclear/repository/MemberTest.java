@@ -1,7 +1,7 @@
 package com.anywayclear.repository;
 
-import com.anywayclear.entity.MemberEntity;
-import com.anywayclear.entity.MemberStatusEntity;
+import com.anywayclear.entity.Member;
+import com.anywayclear.entity.MemberStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,18 +20,18 @@ public class MemberTest {
 
     @Test
     void SignUpTest() {
-        MemberEntity memberEntity = new MemberEntity();
-        memberEntity.setId("S000001");
-        memberEntity.setNickname("flowerdonk");
-        memberEntity.setPhone_number("01085025150");
-        memberEntity.setDesc("싱싱한 딸기");
-        memberEntity.setCompany_registration_number("123456");
-        memberEntity.setCompany_address("Incheon");
-        MemberEntity savedMember = memberRepository.save(memberEntity);
+        Member member = new Member();
+        member.setId("S000001");
+        member.setNickname("flowerdonk");
+//        member.setPhone_number("01085025150");
+        member.setDesc("싱싱한 딸기");
+//        member.setCompany_registration_number("123456");
+//        member.setCompany_address("Incheon");
+        Member savedMember = memberRepository.save(member);
 
-        MemberStatusEntity memberStatusEntity = new MemberStatusEntity();
-        memberStatusEntity.setMemberEntity(savedMember);
-        MemberStatusEntity savedMemberStatus = memberStatusRepository.save(memberStatusEntity);
+        MemberStatus memberStatus = new MemberStatus();
+        memberStatus.setMember(savedMember);
+        MemberStatus savedMemberStatus = memberStatusRepository.save(memberStatus);
 
         System.out.println("savedMember = " + savedMember);
         System.out.println("savedMemberStatus = " + savedMemberStatus);
