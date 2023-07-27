@@ -65,7 +65,7 @@ public class Produce {
                 .startPrice(request.getStartPrice())
                 .kg(request.getKg())
                 .ea(request.getEa())
-                .startPrice(request.getStartPrice())
+                .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .status(0)
                 .build();
