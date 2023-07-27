@@ -21,9 +21,9 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/sing-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<Void> getMember(@Valid @RequestBody MemberCreateRequest request) {
         final String id = memberService.createMember(request);
-        return ResponseEntity.created(URI.create("api//members/" + id)).build();
+        return ResponseEntity.created(URI.create("api/members/" + id)).build();
     }
 }
