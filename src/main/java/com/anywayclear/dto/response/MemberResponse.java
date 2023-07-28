@@ -5,19 +5,23 @@ import com.anywayclear.entity.Member;
 import lombok.Builder;
 
 public class MemberResponse {
+    private String userId;
     private String nickname;
     private String image;
     private String emailAddress;
+    private String role;
     private String phoneNumber;
     private String description;
     private String companyRegistrationNumber;
     private String companyAddress;
 
     @Builder
-    public MemberResponse(String nickname, String image, String emailAddress, String phoneNumber, String desc, String companyRegistrationNumber, String companyAddress) {
+    public MemberResponse(String userId, String nickname, String image, String emailAddress, String role,String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
+        this.userId = userId;
         this.nickname = nickname;
         this.image = image;
         this.emailAddress = emailAddress;
+        this.role = role;
         this.phoneNumber = phoneNumber;
         this.description = description;
         this.companyRegistrationNumber = companyRegistrationNumber;
@@ -26,11 +30,13 @@ public class MemberResponse {
 
     public static MemberResponse toResponse(Member member) {
         return MemberResponse.builder()
+                .userId(member.getUserId())
                 .nickname(member.getNickname())
                 .image(member.getImage())
                 .emailAddress(member.getEmailAddress())
+                .role(member.getRole())
                 .phoneNumber(member.getPhoneNumber())
-                .desc(member.getDescription())
+                .description(member.getDescription())
                 .companyRegistrationNumber(member.getCompanyRegistrationNumber())
                 .companyAddress(member.getCompanyAddress())
                 .build();
