@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,11 +15,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PointCreateRequest {
 
-    @NotBlank
+    @NotNull
     private int balance;
-    @NotBlank
+    @NotNull
     private LocalDateTime updatedAt;
-    @NotBlank
+    @NotNull
     private Member member;
 
     @Builder
