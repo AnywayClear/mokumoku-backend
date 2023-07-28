@@ -1,6 +1,6 @@
 package com.anywayclear.config;
 
-import com.anywayclear.service.MemberService;
+import com.anywayclear.config.oauth.CustumOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Autowired
-    private MemberService memberService;
+    private CustumOAuth2UserService custumOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -27,7 +27,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2Login -> oauth2Login
                         .userInfoEndpoint()
-                        .userService(memberService)
+                        .userService(custumOAuth2UserService)
                 );
         return httpSecurity.build(); // 설정된 HttpSecurity를 SecurityFilterChain으로 반환
     }

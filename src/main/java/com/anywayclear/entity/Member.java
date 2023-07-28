@@ -6,7 +6,6 @@ import lombok.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
 @Getter
@@ -17,16 +16,21 @@ public class Member {
 
     @Id
     @Column(nullable = false)
-    private String id;
+    private String id; // Entity key
 
     @Column(nullable = false)
-    private String nickname;
+    private String userId; // 사용자 식별용 ID
 
     @Column(nullable = false)
     private String image;
 
     @Column(nullable = false)
     private String emailAddress;
+
+    @Column(nullable = false)
+    private String role; // ROLE_CONSUMER, ROLE_SELLER
+
+    private String nickname;
 
     private String phoneNumber;
 
@@ -36,12 +40,16 @@ public class Member {
 
     private String companyAddress;
 
+
+
     @Builder
-    public Member(String id, String nickname, String image, String emailAddress, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
+    public Member(String id, String userId, String nickname, String image, String emailAddress, String role, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
         this.id = id;
+        this.userId = userId;
         this.nickname = nickname;
         this.image = image;
         this.emailAddress = emailAddress;
+        this.role = role;
         this.phoneNumber = phoneNumber;
         this.description = description;
         this.companyRegistrationNumber = companyRegistrationNumber;
@@ -50,9 +58,12 @@ public class Member {
 
     public static Member toEntity(MemberCreateRequest request) {
         return Member.builder()
+                .id(request.getId())
+                .userId(request.getUserId())
                 .nickname(request.getNickname())
                 .image(request.getImage())
                 .emailAddress(request.getEmailAddress())
+                .role(request.getRole())
                 .phoneNumber(request.getPhoneNumber())
                 .description(request.getDescription())
                 .companyRegistrationNumber(request.getCompanyRegistrationNumber())
