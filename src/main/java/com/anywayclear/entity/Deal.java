@@ -26,17 +26,15 @@ public class Deal {
     private boolean isPaid = false;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "consumer_id", referencedColumnName = "id")
     private Member consumer;
 
     @ManyToOne
-    @JoinColumn(name = "id")
-    @Column(nullable = false)
+    @JoinColumn(name = "seller_id", referencedColumnName = "id")
     private Member seller;
 
     @ManyToOne
-    @JoinColumn(name = "id")
-    @Column(nullable = false)
+    @JoinColumn(name = "produce_id", referencedColumnName = "id")
     private Produce produce;
 
     @Builder
