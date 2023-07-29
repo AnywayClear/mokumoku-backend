@@ -20,13 +20,11 @@ public class Dib {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
-    @Column(nullable = false)
+    @JoinColumn(name = "consumer_id", referencedColumnName = "id")
     private Member consumer;
 
     @ManyToOne
-    @JoinColumn(name = "id")
-    @Column(nullable = false)
+    @JoinColumn(name = "produce_id", referencedColumnName = "id")
     private Produce produce;
 
     @Builder
