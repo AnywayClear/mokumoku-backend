@@ -8,21 +8,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class DealCreateRequest {
 
-    @NotBlank
+    @NotNull
     private int endPrice;
-    @NotBlank
+    @NotNull
     private boolean ispaid;
-    @NotBlank
+    @NotNull
     private Member consumer;
-    @NotBlank
+    @NotNull
     private Member seller;
-    @NotBlank
+    @NotNull
     private Produce produce;
 
     @Builder
