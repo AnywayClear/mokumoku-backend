@@ -25,7 +25,7 @@ public class DealController {
     }
 
     @GetMapping
-    public ResponseEntity<DealResponseList> getDealList(@RequestParam(name = "nickname") String nickname) {
-        return ResponseEntity.ok(dealService.getDealList(nickname));
+    public ResponseEntity<DealResponseList> getDealList(@RequestParam(name = "userId") String userId) {
+        return ResponseEntity.ok(dealService.getDealList(userId));
     }
 }

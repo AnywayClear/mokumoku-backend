@@ -18,7 +18,7 @@ public class SubscribeController {
     }
 
     @GetMapping
-    public ResponseEntity<SubscribeResponseList> getSubscribeList(@RequestParam(name = "nickname") String nickname) {
-        return ResponseEntity.ok(subscribeService.getSubscribeList(nickname));
+    public ResponseEntity<SubscribeResponseList> getSubscribeList(@RequestParam(name = "userId") String userId) {
+        return ResponseEntity.ok(subscribeService.getSubscribeList(userId));
     }
 }

@@ -30,8 +30,8 @@ public class DealService {
         return DealResponse.toResponse(deal);
     }
 
-    public DealResponseList getDealList(String nickname) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("해당 닉네임의 유저가 없습니다."));
+    public DealResponseList getDealList(String userId) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
         List<Deal> dealList;
         if (member.getRole() == "ROLE_SELLER") { // 판매자 일 경우
             dealList = dealRepository.findAllBySeller(member);

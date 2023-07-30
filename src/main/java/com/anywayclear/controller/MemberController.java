@@ -27,7 +27,7 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<MemberResponse> getMemberDetail(@RequestParam(name = "nickname") String nickname) {
-        return ResponseEntity.ok(memberService.getMemberByNickname(nickname));
+    public ResponseEntity<MemberResponse> getMemberDetail(@RequestParam(name = "userId") String userId) {
+        return ResponseEntity.ok(memberService.getMemberByUserId(userId));
     }
 }

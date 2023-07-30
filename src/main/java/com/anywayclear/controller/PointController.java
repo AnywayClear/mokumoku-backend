@@ -19,7 +19,7 @@ public class PointController {
     }
 
     @GetMapping
-    public ResponseEntity<PointResponse> getPoint(@RequestParam(name = "nickname") String nickname) {
-        return ResponseEntity.ok(pointService.getPoint(nickname));
+    public ResponseEntity<PointResponse> getPoint(@RequestParam(name = "userId") String userId) {
+        return ResponseEntity.ok(pointService.getPoint(userId));
     }
 }

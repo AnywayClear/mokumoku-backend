@@ -15,8 +15,8 @@ public class DibController {
     }
 
     @GetMapping
-    public ResponseEntity<DibResponseList> getDibList(@RequestParam(name = "nickname") String nickname) {
-        return ResponseEntity.ok(dibService.getDibList(nickname));
+    public ResponseEntity<DibResponseList> getDibList(@RequestParam(name = "userId") String userId) {
+        return ResponseEntity.ok(dibService.getDibList(userId));
     }
 
 }
