@@ -6,6 +6,8 @@ import com.anywayclear.entity.Member;
 import com.anywayclear.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MemberService {
 
@@ -23,4 +25,8 @@ public class MemberService {
         return MemberResponse.toResponse(member);
     }
 
+    public MemberResponse getMemberByNickname(String nickname) {
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("해당 닉네임의 유저가 없습니다."));
+        return MemberResponse.toResponse(member);
+    }
 }

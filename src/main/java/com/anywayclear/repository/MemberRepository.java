@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, String> {
     Optional<Member> findByEmailAddress(String emailAddress); // NullPointerException과 같은 예외를 방지하기 위해 Optional 사용
+
+    Optional<Member> findByNickname(String nickname); // 닉네임으로 멤버 객체 불러오기
+
 }

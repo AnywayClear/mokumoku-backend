@@ -1,7 +1,15 @@
 package com.anywayclear.repository;
 
+import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Subscribe;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
+
+    List<Subscribe> findAllByConsumer(Member member);
+    List<Subscribe> findAllBySeller(Member member);
+
 }

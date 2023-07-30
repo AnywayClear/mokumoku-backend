@@ -1,17 +1,22 @@
 package com.anywayclear.controller;
 
+import com.anywayclear.dto.response.DibResponseList;
 import com.anywayclear.service.DibService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api/dibs")
 public class DibController {
     private final DibService dibService;
 
     public DibController(DibService dibService) {
         this.dibService = dibService;
+    }
+
+    @GetMapping
+    public ResponseEntity<DibResponseList> getDibList(@RequestParam(name = "nickname") String nickname) {
+        return ResponseEntity.ok(dibService.getDibList(nickname));
     }
 
 }

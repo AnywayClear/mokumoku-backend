@@ -3,7 +3,11 @@ package com.anywayclear.dto.response;
 
 import com.anywayclear.entity.Member;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MemberResponse {
     private String userId;
     private String nickname;

@@ -1,11 +1,10 @@
 package com.anywayclear.entity;
 
 import com.anywayclear.dto.request.MemberCreateRequest;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -39,6 +38,10 @@ public class Member {
     private String companyRegistrationNumber;
 
     private String companyAddress;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL) // 영속성 전이가 발생해 부모객체를 저장할 때 자식객체도 함께 저장
+    @JsonBackReference // 순환참조 방지
+    private Point point = new Point(this); // 멤버 생성 시 포인트 객체 자동 생성
 
 
 
