@@ -31,8 +31,8 @@ public class DibService {
         return DibResponse.toResponse(dib);
     }
 
-    public DibResponseList getDibList(String nickname) { // 찜 중인 농산물 리스트 반환
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("해당 닉네임의 유저가 없습니다."));
+    public DibResponseList getDibList(String userId) { // 찜 중인 농산물 리스트 반환
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
         List<Dib> dibList = dibRepository.findAllByConsumer(member);
         return new DibResponseList(dibList);
     }

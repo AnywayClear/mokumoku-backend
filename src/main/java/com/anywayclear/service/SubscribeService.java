@@ -30,8 +30,8 @@ public class SubscribeService {
         return SubscribeResponse.toResponse(subscribe);
     }
 
-    public SubscribeResponseList getSubscribeList(String nickname) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("해당 닉네임의 유저가 없습니다."));
+    public SubscribeResponseList getSubscribeList(String userId) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
         List<Subscribe> subscribeList;
         if (member.getRole() == "ROLE_SELLER") { // 판매자 일 경우
             subscribeList = subscribeRepository.findAllBySeller(member);

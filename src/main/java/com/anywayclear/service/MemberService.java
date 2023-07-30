@@ -25,8 +25,8 @@ public class MemberService {
         return MemberResponse.toResponse(member);
     }
 
-    public MemberResponse getMemberByNickname(String nickname) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new RuntimeException("해당 닉네임의 유저가 없습니다."));
+    public MemberResponse getMemberByUserId(String userId) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
         return MemberResponse.toResponse(member);
     }
 }
