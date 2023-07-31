@@ -18,8 +18,6 @@ public class DealCreateRequest {
     @NotNull
     private int endPrice;
     @NotNull
-    private boolean ispaid;
-    @NotNull
     private Member consumer;
     @NotNull
     private Member seller;
@@ -27,9 +25,8 @@ public class DealCreateRequest {
     private Produce produce;
 
     @Builder
-    public DealCreateRequest(int endPrice, boolean ispaid, Member consumer, Member seller, Produce produce) {
+    public DealCreateRequest(int endPrice, Member consumer, Member seller, Produce produce) {
         this.endPrice = endPrice;
-        this.ispaid = ispaid;
         this.consumer = consumer;
         this.seller = seller;
         this.produce = produce;
