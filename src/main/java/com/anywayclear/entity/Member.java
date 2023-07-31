@@ -61,8 +61,6 @@ public class Member {
 
     public static Member toEntity(MemberCreateRequest request) {
         return Member.builder()
-                .id(request.getId())
-                .userId(request.getUserId())
                 .nickname(request.getNickname())
                 .image(request.getImage())
                 .emailAddress(request.getEmailAddress())

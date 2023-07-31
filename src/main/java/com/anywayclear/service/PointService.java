@@ -1,6 +1,5 @@
 package com.anywayclear.service;
 
-import com.anywayclear.dto.request.PointCreateRequest;
 import com.anywayclear.dto.response.PointResponse;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Point;

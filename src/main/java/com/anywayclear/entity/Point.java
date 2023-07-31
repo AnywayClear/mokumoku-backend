@@ -1,6 +1,5 @@
 package com.anywayclear.entity;
 
-import com.anywayclear.dto.request.PointCreateRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,11 +34,5 @@ public class Point extends BaseTime{
     public Point(Member member) {
         this.member = member;
 //        this.updatedAt = LocalDateTime.now();
-    }
-
-    public static Point toEntity(PointCreateRequest request) {
-        return Point.builder()
-                .member(request.getMember())
-                .build();
     }
 }

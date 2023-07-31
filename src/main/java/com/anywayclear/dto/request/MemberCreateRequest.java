@@ -13,10 +13,6 @@ import javax.validation.constraints.NotBlank;
 public class MemberCreateRequest {
 
     @NotBlank
-    private String id;
-    @NotBlank
-    private String userId;
-    @NotBlank
     private String nickname;
     @NotBlank
     private String image;
@@ -30,9 +26,7 @@ public class MemberCreateRequest {
     private String companyAddress;
 
     @Builder
-    public MemberCreateRequest(String id, String userId, String nickname, String image, String emailAddress, String role,String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
-        this.id = id;
-        this.userId = userId;
+    public MemberCreateRequest(String nickname, String image, String emailAddress, String role,String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
         this.nickname = nickname;
         this.image = image;
         this.emailAddress = emailAddress;
