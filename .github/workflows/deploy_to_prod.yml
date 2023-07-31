@@ -15,8 +15,9 @@ jobs:
 
       - name: Make application.yml
         run: |
-          mkdir -p ./src/main/resources 
-          echo "${{ secrets.PROPERTIES_PROD }}" > ./application.yml
+          mkdir -p ./src/main/resources
+          touch ./src/main/resources/application.yml 
+          echo "${{ secrets.PROPERTIES_PROD }}" > ./src/main/resources/application.yml
         shell: bash
 
       - name: Configure AWS credentials
