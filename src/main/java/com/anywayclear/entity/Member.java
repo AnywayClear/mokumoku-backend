@@ -43,7 +43,9 @@ public class Member {
     @JsonBackReference // 순환참조 방지
     private Point point = new Point(this); // 멤버 생성 시 포인트 객체 자동 생성
 
-
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private MemberStatus memberStatus = new MemberStatus(this);
 
     @Builder
     public Member(String id, String userId, String nickname, String image, String emailAddress, String role, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
