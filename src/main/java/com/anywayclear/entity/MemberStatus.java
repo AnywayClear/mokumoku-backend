@@ -1,5 +1,6 @@
 package com.anywayclear.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +22,12 @@ public class MemberStatus {
     private boolean isOut = false;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_id")
+    @JsonManagedReference // 순환참조 방지
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
+
+    @Builder
+    public MemberStatus(Member member) {
+        this.member = member;
+    }
 }
