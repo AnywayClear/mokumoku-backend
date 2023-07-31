@@ -15,7 +15,6 @@ public class MemberStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "member_status_id")
     private Long id;
 
     @Column(nullable = false)
