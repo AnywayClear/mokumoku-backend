@@ -1,12 +1,10 @@
 package com.anywayclear.entity;
 
-import com.anywayclear.dto.request.PointCreateRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,11 +35,5 @@ public class Point {
     public Point(Member member) {
         this.member = member;
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public static Point toEntity(PointCreateRequest request) {
-        return Point.builder()
-                .member(request.getMember())
-                .build();
     }
 }
