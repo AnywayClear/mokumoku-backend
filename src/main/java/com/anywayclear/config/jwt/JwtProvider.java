@@ -21,12 +21,9 @@ public class JwtProvider {
 
     // 인증 정보를 기반으로 JWT 토큰 생성하는 메서드
     public String createToken(Authentication authentication) {
-        System.out.println(">>>>>>>>>>>> ");
 
         // 사용자 정보 가져오기
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        System.out.println("Provider ================== ");
-        System.out.println("oAuth2User.getAttributes() = " + oAuth2User.getAttributes());
 
         // 현재 시간과 토큰 만료 시간 설정
         Date now = new Date();
