@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir -p ./src/main/resources
           touch ./src/main/resources/application.yml 
-          echo "${{ secrets.PROPERTIES_DEV }}" > ./application.yml
+          echo "${{ secrets.PROPERTIES_DEV }}" > ./src/main/resources/application.yml
         shell: bash
 
       - name: Configure AWS credentials
