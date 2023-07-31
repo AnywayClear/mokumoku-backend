@@ -37,7 +37,6 @@ jobs:
           ECR_REPOSITORY: mokumoku-back
           IMAGE_TAG: ${{ github.run_number }}
         run: |
-          cat ./src/main/resources/application.yml
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY --all-tags
