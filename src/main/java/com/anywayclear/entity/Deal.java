@@ -38,10 +38,8 @@ public class Deal {
     private Produce produce;
 
     @Builder
-    public Deal(Long id, int endPrice, boolean isPaid, Member consumer, Member seller, Produce produce) {
-        this.id = id;
+    public Deal(int endPrice, Member consumer, Member seller, Produce produce) {
         this.endPrice = endPrice;
-        this.isPaid = isPaid;
         this.consumer = consumer;
         this.seller = seller;
         this.produce = produce;
@@ -50,7 +48,6 @@ public class Deal {
     public static Deal toEntity(DealCreateRequest request) {
         return Deal.builder()
                 .endPrice(request.getEndPrice())
-                .isPaid(request.isIspaid())
                 .consumer(request.getConsumer())
                 .seller(request.getSeller())
                 .produce(request.getProduce())

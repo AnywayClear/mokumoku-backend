@@ -32,14 +32,6 @@ public class Point extends BaseTime{
     private Member member;
 
     @Builder
-    public Point(Long id, int balance, Member member) {
-        this.id = id;
-        this.balance = balance;
-//        this.updatedAt = updatedAt;
-        this.member = member;
-    }
-
-    @Builder
     public Point(Member member) {
         this.member = member;
 //        this.updatedAt = LocalDateTime.now();
@@ -47,8 +39,6 @@ public class Point extends BaseTime{
 
     public static Point toEntity(PointCreateRequest request) {
         return Point.builder()
-                .balance(request.getBalance())
-//                .updatedAt(request.getUpdatedAt())
                 .member(request.getMember())
                 .build();
     }
