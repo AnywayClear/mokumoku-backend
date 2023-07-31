@@ -39,10 +39,11 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2Login -> oauth2Login
 //                        .loginPage("/frontLoginPage") // OAuth 2.0 로그인을 처리할 때, 인증되지 않은 사용자를 전달할 로그인 페이지를 지정
-                        .successHandler(oAuth2AuthenticationSuccessHandler)
-                        .userInfoEndpoint()
-                        .userService(custumOAuth2UserService)
-                );
+                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                .userInfoEndpoint()
+                                .userService(custumOAuth2UserService)
+                ).headers().frameOptions().disable(); // h2사용을 위해 임시 설정
+
         return httpSecurity.build(); // 설정된 HttpSecurity를 SecurityFilterChain으로 반환
     }
 }
