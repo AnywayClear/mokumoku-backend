@@ -6,16 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Point {
+public class Point extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +23,8 @@ public class Point {
     @Column(nullable = false)
     private int balance = 0;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+//    @Column(nullable = false)
+//    private LocalDateTime updatedAt;
 
     @OneToOne
     @JsonManagedReference // 순환참조 방지
@@ -36,7 +34,7 @@ public class Point {
     @Builder
     public Point(Member member) {
         this.member = member;
-        this.updatedAt = LocalDateTime.now();
+//        this.updatedAt = LocalDateTime.now();
     }
 
     public static Point toEntity(PointCreateRequest request) {
