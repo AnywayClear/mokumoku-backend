@@ -4,6 +4,7 @@ import com.anywayclear.dto.request.MemberCreateRequest;
 import com.anywayclear.dto.response.MemberResponse;
 import com.anywayclear.service.MemberService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;

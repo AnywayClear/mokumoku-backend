@@ -14,7 +14,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity // spring security filter가 spring filter chain에 등록됨
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화, preAuthorized, poserAuthorized 어노테이션 활성화 -> 메소드 단위 권한설정 가능
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화, preAuthorized, postAuthorized 어노테이션 활성화 -> 메소드 단위 권한설정 가능
 public class SecurityConfig {
 
     @Autowired

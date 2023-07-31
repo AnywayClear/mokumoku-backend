@@ -67,7 +67,7 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
                 .emailAddress(emailAddress)
                 .image(image)
                 .nickname(nickname)
-                .role("ROLE_CUSTOMER")
+                .role("ROLE_CONSUMER")
                 .build();
 
         return memberRepository.save(member);
