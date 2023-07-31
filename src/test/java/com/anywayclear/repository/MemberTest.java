@@ -24,7 +24,7 @@ public class MemberTest {
         member.setId("S000001");
         member.setNickname("flowerdonk");
 //        member.setPhone_number("01085025150");
-        member.setDesc("싱싱한 딸기");
+        member.setDescription("싱싱한 딸기");
 //        member.setCompany_registration_number("123456");
 //        member.setCompany_address("Incheon");
         Member savedMember = memberRepository.save(member);

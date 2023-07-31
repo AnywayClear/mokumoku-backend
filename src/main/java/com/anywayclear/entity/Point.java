@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Point {
+public class Point extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,8 @@ public class Point {
     @Column(nullable = false)
     private int balance = 0;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+//    @Column(nullable = false)
+//    private LocalDateTime updatedAt;
 
     @OneToOne
     @JsonManagedReference // 순환참조 방지
@@ -34,23 +34,23 @@ public class Point {
     private Member member;
 
     @Builder
-    public Point(Long id, int balance, LocalDateTime updatedAt, Member member) {
+    public Point(Long id, int balance, Member member) {
         this.id = id;
         this.balance = balance;
-        this.updatedAt = updatedAt;
+//        this.updatedAt = updatedAt;
         this.member = member;
     }
 
     @Builder
     public Point(Member member) {
         this.member = member;
-        this.updatedAt = LocalDateTime.now();
+//        this.updatedAt = LocalDateTime.now();
     }
 
     public static Point toEntity(PointCreateRequest request) {
         return Point.builder()
                 .balance(request.getBalance())
-                .updatedAt(request.getUpdatedAt())
+//                .updatedAt(request.getUpdatedAt())
                 .member(request.getMember())
                 .build();
     }
