@@ -28,8 +28,7 @@ public class Subscribe {
     private Member seller;
 
     @Builder
-    public Subscribe(Long id, Member consumer, Member seller) {
-        this.id = id;
+    public Subscribe(Member consumer, Member seller) {
         this.consumer = consumer;
         this.seller = seller;
     }
