@@ -16,13 +16,15 @@ import javax.validation.constraints.NotNull;
 public class DibCreateRequest {
 
     @NotNull
-    private Member consumer;
+    private String consumerId;
+
     @NotNull
-    private Produce produce;
+    private Long produceId;
+
 
     @Builder
-    public DibCreateRequest(Member consumer, Produce produce) {
-        this.consumer = consumer;
-        this.produce = produce;
+    public DibCreateRequest(String consumerId, Long produceId) {
+        this.consumerId = consumerId;
+        this.produceId = produceId;
     }
 }
