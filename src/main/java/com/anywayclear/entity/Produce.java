@@ -44,6 +44,9 @@ public class Produce {
     @Column(nullable = false)
     private int status;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
     @Builder
     public Produce(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status) {
         this.name = name;
