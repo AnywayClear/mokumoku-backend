@@ -33,10 +33,4 @@ public class Subscribe {
         this.seller = seller;
     }
 
-    public static Subscribe toEntity(SubscribeCreateRequest request) {
-        return Subscribe.builder()
-                .consumer(request.getConsumer())
-                .seller(request.getSeller())
-                .build();
-    }
 }

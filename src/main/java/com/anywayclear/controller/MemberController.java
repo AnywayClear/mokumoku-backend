@@ -26,8 +26,8 @@ public class MemberController {
         return ResponseEntity.created(URI.create("api/members/" + id)).build();
     }
 
-    @GetMapping
-    public ResponseEntity<MemberResponse> getMemberDetail(@RequestParam(name = "userId") String userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<MemberResponse> getMemberDetail(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(memberService.getMemberByUserId(userId));
     }
 }

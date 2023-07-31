@@ -33,10 +33,4 @@ public class Dib {
         this.produce = produce;
     }
 
-    public static Dib toEntity(DibCreateRequest request) {
-        return Dib.builder()
-                .consumer(request.getConsumer())
-                .produce(request.getProduce())
-                .build();
-    }
 }
