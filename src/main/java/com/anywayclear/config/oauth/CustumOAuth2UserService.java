@@ -31,35 +31,28 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        Map<String, Object> kakao_account = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
 
-        String emailAddress = (String) kakao_account.get("email");
-        String nickname = (String) profile.get("nickname");
-        String image = (String) profile.get("profile_image_url");
+        Member member = getOrCreateMember(oAuth2User);
 
-        Member member = getOrCreateMember(emailAddress, nickname, image);
-
-        String oauth2UserRole = member.getRole();
-        String oauth2UserId = member.getUserId();
-
-        Map<String, Object> userAttributes = new HashMap<>();
-        userAttributes.put("role", oauth2UserRole);
-        userAttributes.put("userId", oauth2UserId);
+        Map<String, Object> userAttributes = createNewAttribute(member);
 
         // Spring Security의 세션에 OAuth2User객체 저장됨
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(oauth2UserRole)), userAttributes, "userId");
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole())), userAttributes, "id");
     }
 
-    private Member getOrCreateMember(String emailAddress, String nickname, String image) {
+    private Member getOrCreateMember(OAuth2User oAuth2User) {
+        Map<String, Object> kakao_account = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+        String emailAddress = (String) kakao_account.get("email");
+
         Optional<Member> memberOptional = memberRepository.findByEmailAddress(emailAddress);
+
         if (memberOptional.isPresent()) {
-            System.out.println("이미 회원입니다");
-            Member member = memberOptional.get();
-            member.setImage(image);
-            return memberRepository.save(member);
+            return memberOptional.get();
         } else {
-            System.out.println("회원가입합니다");
+            Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
+            String nickname = (String) profile.get("nickname");
+            String image = (String) profile.get("profile_image_url");
+
             return createMember(emailAddress, nickname, image);
         }
     }
@@ -74,9 +67,17 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
                 .emailAddress(emailAddress)
                 .image(image)
                 .nickname(nickname)
-                .role("ROLE_CUSTOMER")
+                .role("ROLE_CONSUMER")
                 .build();
 
         return memberRepository.save(member);
+    }
+
+    private Map<String, Object> createNewAttribute(Member member) {
+        Map<String, Object> newAttributes = new HashMap<>();
+        newAttributes.put("id", member.getId());
+        newAttributes.put("userId", member.getUserId());
+        newAttributes.put("role", member.getRole());
+        return newAttributes;
     }
 }
