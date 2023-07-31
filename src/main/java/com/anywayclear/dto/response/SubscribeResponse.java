@@ -3,7 +3,11 @@ package com.anywayclear.dto.response;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Subscribe;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class SubscribeResponse {
     private Member consumer;
     private Member seller;
