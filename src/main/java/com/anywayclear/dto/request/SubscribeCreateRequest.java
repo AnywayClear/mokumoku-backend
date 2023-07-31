@@ -14,13 +14,13 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class SubscribeCreateRequest {
     @NotNull
-    private Member consumer;
+    private String consumerId;
     @NotNull
-    private Member seller;
+    private String sellerId;
 
     @Builder
-    public SubscribeCreateRequest(Member consumer, Member seller) {
-        this.consumer = consumer;
-        this.seller = seller;
+    public SubscribeCreateRequest(String consumerId, String sellerId) {
+        this.consumerId = consumerId;
+        this.sellerId = sellerId;
     }
 }

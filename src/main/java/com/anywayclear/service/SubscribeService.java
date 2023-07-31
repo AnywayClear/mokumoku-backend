@@ -22,7 +22,10 @@ public class SubscribeService {
     }
 
     public Long createSubscribe(SubscribeCreateRequest request) {
-        return subscribeRepository.save(Subscribe.toEntity(request)).getId();
+        Member consumer = memberRepository.findByUserId(request.getConsumerId()).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+        Member seller = memberRepository.findByUserId(request.getSellerId()).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+        Subscribe subscribe = new Subscribe(consumer, seller);
+        return subscribeRepository.save(subscribe).getId();
     }
 
     public SubscribeResponse getSubscribe(Long id) {
