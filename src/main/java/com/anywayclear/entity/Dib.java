@@ -28,8 +28,7 @@ public class Dib {
     private Produce produce;
 
     @Builder
-    public Dib(Long id, Member consumer, Produce produce) {
-        this.id = id;
+    public Dib(Member consumer, Produce produce) {
         this.consumer = consumer;
         this.produce = produce;
     }

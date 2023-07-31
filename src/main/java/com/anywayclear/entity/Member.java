@@ -46,8 +46,7 @@ public class Member {
 
 
     @Builder
-    public Member(String id, String userId, String nickname, String image, String emailAddress, String role, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
-        this.id = id;
+    public Member(String userId, String nickname, String image, String emailAddress, String role, String phoneNumber, String description, String companyRegistrationNumber, String companyAddress) {
         this.userId = userId;
         this.nickname = nickname;
         this.image = image;
@@ -61,7 +60,6 @@ public class Member {
 
     public static Member toEntity(MemberCreateRequest request) {
         return Member.builder()
-                .id(request.getId())
                 .userId(request.getUserId())
                 .nickname(request.getNickname())
                 .image(request.getImage())
