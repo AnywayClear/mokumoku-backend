@@ -1,10 +1,8 @@
 package com.anywayclear.dto.response;
 
-import com.anywayclear.entity.Auction;
 import com.anywayclear.entity.Produce;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;

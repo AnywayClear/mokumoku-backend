@@ -2,7 +2,6 @@ package com.anywayclear.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class BiddingResponse {
