@@ -7,6 +7,8 @@ import com.anywayclear.dto.response.ProduceResponseList;
 import com.anywayclear.entity.Member;
 import com.anywayclear.service.ProduceService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/produces")
+//@Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
 public class ProduceController {
     private final ProduceService produceService;
 
@@ -28,15 +31,19 @@ public class ProduceController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> getProduce(Authentication authentication, @Valid @RequestBody ProduceCreateRequest request) {
-//        System.out.println(oAuth2User.getAttributes());
-        System.out.println("authentication.getPrincipal() = " + authentication.getPrincipal());
+//    @PreAuthorize("hasRole('ROLE_CONSUMER')")
+//    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
+    public ResponseEntity<Void> createProduce(@AuthenticationPrincipal OAuth2User oAuth2User, @Valid @RequestBody ProduceCreateRequest request) {
+//        System.out.println("출력완료~~~~~" + oAuth2User.getAttributes());
+//        System.out.println("authentication.getPrincipal() = " + authentication.getPrincipal());
         final Long id = produceService.createProduce(request);
         return ResponseEntity.created(URI.create("/api/produces/" + id)).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProduceResponse> getProduce(@Positive @PathVariable("id") long id) {
+    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
+    public ResponseEntity<ProduceResponse> getProduce(@AuthenticationPrincipal OAuth2User oAuth2User, @Positive @PathVariable("id") long id) {
+        System.out.println("출력완료~~~~~" + oAuth2User.getAttributes().get("userId"));
         return ResponseEntity.ok(produceService.getProduce(id));
     }
 

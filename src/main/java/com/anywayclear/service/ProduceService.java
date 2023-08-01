@@ -8,6 +8,7 @@ import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.entity.Produce;
 import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,10 +30,12 @@ public class ProduceService {
         return produce.getId();
     }
 
+    @Transactional(readOnly = true)
     public ProduceResponse getProduce(Long id) {
         Produce produce = produceRepository.findById(id).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
         return ProduceResponse.toResponse(produce);
     }
+    @Transactional(readOnly = true)
     public ProduceResponseList getProduceList(List<Integer> statusNoList) {
         List<Produce> produceList = produceRepository.findByStatusIn(statusNoList);
         return new ProduceResponseList(produceList);
