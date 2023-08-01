@@ -19,10 +19,10 @@ public class Auction {
     @JoinColumn(name = "produce_id")
     private Produce produce;
 
-    private int bidding;
+    private int price;
 
     public Auction(Produce produce) {
         this.produce = produce;
-        this.bidding = produce.getStartPrice();
+        this.price = produce.getStartPrice();
     }
 }

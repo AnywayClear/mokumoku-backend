@@ -4,7 +4,7 @@ import com.anywayclear.dto.request.ProduceCreateRequest;
 import com.anywayclear.dto.response.ProduceResponseList;
 import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.entity.Auction;
-import com.anywayclear.entity.AuctionRepository;
+import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.entity.Produce;
 import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
