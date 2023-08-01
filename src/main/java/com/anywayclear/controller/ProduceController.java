@@ -4,8 +4,13 @@ package com.anywayclear.controller;
 import com.anywayclear.dto.request.ProduceCreateRequest;
 import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.dto.response.ProduceResponseList;
+import com.anywayclear.entity.Member;
 import com.anywayclear.service.ProduceService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,8 +28,10 @@ public class ProduceController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> getProduce(@Valid @RequestBody ProduceCreateRequest request) {
-        final Long id= produceService.createProduce(request);
+    public ResponseEntity<Void> getProduce(Authentication authentication, @Valid @RequestBody ProduceCreateRequest request) {
+//        System.out.println(oAuth2User.getAttributes());
+        System.out.println("authentication.getPrincipal() = " + authentication.getPrincipal());
+        final Long id = produceService.createProduce(request);
         return ResponseEntity.created(URI.create("/api/produces/" + id)).build();
     }
 
