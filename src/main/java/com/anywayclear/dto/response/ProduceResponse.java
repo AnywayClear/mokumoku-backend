@@ -1,10 +1,10 @@
 package com.anywayclear.dto.response;
 
-import com.anywayclear.entity.Auction;
+import com.anywayclear.entity.Dib;
+import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.List;
 //@Setter
 public class ProduceResponse {
     private final String name;
+    private final String seller;
     private final String description;
     private final String image;
     private final int startPrice;
@@ -22,10 +23,12 @@ public class ProduceResponse {
     private final LocalDateTime endDate;
     private final int status;
     private final List<AuctionResponse> auctionResponseList;
+    private final int dibNum;
 
     @Builder
-    public ProduceResponse(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate,int status,AuctionResponseList auctionResponseList) {
+    public ProduceResponse(String name, Member member, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status, AuctionResponseList auctionResponseList, List<Dib> dibList) {
         this.name = name;
+        this.seller = member.getNickname();
         this.description = description;
         this.image = image;
         this.startPrice = startPrice;
@@ -35,11 +38,13 @@ public class ProduceResponse {
         this.endDate = endDate;
         this.status = status;
         this.auctionResponseList = auctionResponseList.getAuctionResponseList();
+        this.dibNum = dibList.size();
     }
 
     public static ProduceResponse toResponse(Produce produce) {
         return ProduceResponse.builder()
-                .name(produce.getImage())
+                .name(produce.getName())
+                .member(produce.getMember())
                 .description(produce.getDescription())
                 .image(produce.getImage())
                 .startPrice(produce.getStartPrice())
@@ -49,6 +54,7 @@ public class ProduceResponse {
                 .endDate(produce.getEndDate())
                 .status(produce.getStatus())
                 .auctionResponseList(new AuctionResponseList(produce.getAuctionList()))
+                .dibList(produce.getDibList())
                 .build();
     }
 }

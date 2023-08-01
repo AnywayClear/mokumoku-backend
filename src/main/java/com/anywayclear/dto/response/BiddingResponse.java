@@ -2,13 +2,11 @@ package com.anywayclear.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class BiddingResponse {
-    private String userId;
-    private int price;
+    private final String userId;
+    private final int price;
 
     @Builder
     public BiddingResponse(String userId, int price) {
