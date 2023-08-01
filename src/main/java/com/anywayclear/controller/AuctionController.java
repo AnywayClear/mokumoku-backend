@@ -5,12 +5,12 @@ import com.anywayclear.dto.response.BiddingResponse;
 import com.anywayclear.service.AuctionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/api/auctions")
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/api/auctions")
 //@Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
 public class AuctionController {
     private final AuctionService auctionService;
@@ -19,8 +19,10 @@ public class AuctionController {
         this.auctionService = auctionService;
     }
 
-//    @PostMapping("/{auction-id}")
-//    public ResponseEntity<BiddingResponse> bidding(@PathVariable("auction-id") long auctionId, @Valid @RequestBody BiddingRequest request) {
-//        return auctionService.Bidding(auctionId,request);
-//    }
+    @PostMapping("/{auction-id}")
+    public ResponseEntity<BiddingResponse> bidding(
+            @PathVariable("auction-id") long auctionId,
+            @RequestBody BiddingRequest request) {   // 인증정보 받기 추가 예정
+        return ResponseEntity.ok(auctionService.Bidding(auctionId,request));
+    }
 }

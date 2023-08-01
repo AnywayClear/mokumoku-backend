@@ -39,7 +39,7 @@ public class ProduceResponse {
 
     public static ProduceResponse toResponse(Produce produce) {
         return ProduceResponse.builder()
-                .name(produce.getImage())
+                .name(produce.getName())
                 .description(produce.getDescription())
                 .image(produce.getImage())
                 .startPrice(produce.getStartPrice())
