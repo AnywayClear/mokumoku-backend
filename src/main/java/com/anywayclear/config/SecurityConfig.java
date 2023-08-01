@@ -29,9 +29,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
+        httpSecurity.csrf().disable();
         httpSecurity
-                .addFilterBefore(corsFilter, CorsFilter.class) // CorsFilter를 SecurityFilterChain 앞에 추가
-                .csrf().disable() // CSRF 비활성화
+                .addFilter(corsFilter) // CorsFilter를 SecurityFilterChain 앞에 추가
                 .formLogin().disable() // spring security에서 제공하는 login form 비활성화
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS 메서드는 모두 허용
