@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 //@Setter
 public class ProduceResponse {
+    private final long id;
     private final String name;
     private final String seller;
     private final String description;
@@ -26,10 +27,11 @@ public class ProduceResponse {
     private final int dibNum;
 
     @Builder
-    public ProduceResponse(String name, Member member, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status, AuctionResponseList auctionResponseList, List<Dib> dibList) {
+    public ProduceResponse(long id, String name, Member member, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status, AuctionResponseList auctionResponseList, List<Dib> dibList) {
+        this.id = id;
         this.name = name;
 //        this.seller = member.getNickname();
-        this.seller="testSeller";
+        this.seller = "testSeller";
         this.description = description;
         this.image = image;
         this.startPrice = startPrice;
@@ -44,6 +46,7 @@ public class ProduceResponse {
 
     public static ProduceResponse toResponse(Produce produce) {
         return ProduceResponse.builder()
+                .id(produce.getId())
                 .name(produce.getName())
 //                .member(produce.getMember())
                 .member(new Member())
