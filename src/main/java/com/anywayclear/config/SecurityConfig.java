@@ -46,6 +46,8 @@ public class SecurityConfig {
 
         return httpSecurity.build(); // 설정된 HttpSecurity를 SecurityFilterChain으로 반환
     }
+
+    // for test
 }
 
 
