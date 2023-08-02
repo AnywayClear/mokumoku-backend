@@ -20,10 +20,10 @@ jobs:
           echo "${{ secrets.PROPERTIES_DEV }}" > ./src/main/resources/application.yml
         shell: bash
         
-      - name: Make JwtProperties.java
+      - name: Make jwtsecret.properties
         run: |
-          touch ./src/main/java/com/anywayclear/config/jwt/JwtProperties.java
-          echo "${{ secrets.JWT_PROPERTIES }}" > ./src/main/java/com/anywayclear/config/jwt/JwtProperties.java
+          touch ./src/main/resources/jwtsecret.properties
+          echo "${{ secrets.JWT_PROPERTIES }}" > ./src/main/resources/jwtsecret.properties
         shell: bash
 
       - name: Configure AWS credentials
