@@ -19,6 +19,12 @@ jobs:
           touch ./src/main/resources/application.yml 
           echo "${{ secrets.PROPERTIES_DEV }}" > ./src/main/resources/application.yml
         shell: bash
+        
+      - name: Make JwtProperties.java
+        run: |
+          touch ./src/main/java/com.anywayclear/config/jwt/JwtProperties.java
+          echo "${{ secrets.JWT_PROPERTIES }}" > ./src/main/java/com.anywayclear/config/jwt/JwtProperties.java
+        shell: bash
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
