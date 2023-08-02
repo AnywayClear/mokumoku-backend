@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-import static com.anywayclear.config.jwt.JwtProperties.*;
-
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -27,12 +25,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // RSA방식은 아니고 Hash 암호 방식
         String jwtToken = JWT.create()
                 .withSubject("mokumoku")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (EXPIRATION_TIME)))
+                .withExpiresAt(new Date(System.currentTimeMillis() + (JwtProperties.EXPIRATION_TIME)))
                 .withClaim("userId", (String) oAuth2User.getAttributes().get("userId"))
                 .withClaim("role", (String) oAuth2User.getAttributes().get("role"))
-                .sign(Algorithm.HMAC512(SECRET_KEY));
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET_KEY));
         System.out.println("jwtToken = " + jwtToken);
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwtToken);
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
 //        this.getSuccessHandler().onAuthenticationSuccess(request, response, authentication);
     }
 }
