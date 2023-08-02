@@ -1,7 +1,8 @@
 package com.anywayclear.config.jwt;
 
 public interface JwtProperties {
-    int EXPIRATION_TIME = 864000000; // 10일 (1/1000초)
+    String SECRET_KEY = "kyunwangJwt";
+    int EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24시간
     String TOKEN_PREFIX = "Bearer ";
     String HEADER_STRING = "Authorization";
 }
