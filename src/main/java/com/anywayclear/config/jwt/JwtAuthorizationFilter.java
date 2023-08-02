@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.anywayclear.config.jwt.JwtProperties.*;
+
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final MemberRepository memberRepository;
@@ -45,7 +47,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인
         String jwtToken = request.getHeader("Authorization").replace("Bearer ","");
 
-        String userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET_KEY)).build().verify(jwtToken).getClaim("userId").asString();
+        String userId = JWT.require(Algorithm.HMAC512(SECRET_KEY)).build().verify(jwtToken).getClaim("userId").asString();
         // 서명이 정상적으로 됨
         if (userId != null) {
             Optional<Member> memberOptional = memberRepository.findByUserId(userId);
