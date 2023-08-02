@@ -25,7 +25,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println("OAuth2AuthenticationSuccessHandler : 로그인 성공");
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        // RSA방식은 아니고 Hash 암호 방식
         String jwtToken = JWT.create()
                 .withSubject("mokumoku")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24)))
@@ -34,6 +33,5 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .sign(Algorithm.HMAC512(jwtConfig.getKey()));
         System.out.println("jwtToken = " + jwtToken);
         response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + " " + jwtToken);
-//        this.getSuccessHandler().onAuthenticationSuccess(request, response, authentication);
     }
 }
