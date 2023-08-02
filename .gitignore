@@ -40,3 +40,4 @@ out/
 .DS_Store
 application.properties
 application.yml
+*.db
