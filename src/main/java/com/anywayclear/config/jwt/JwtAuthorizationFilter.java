@@ -1,9 +1,11 @@
 package com.anywayclear.config.jwt;
 
+import com.anywayclear.config.JwtConfig;
 import com.anywayclear.entity.Member;
 import com.anywayclear.repository.MemberRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,10 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.anywayclear.config.jwt.JwtProperties.*;
-
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
+    @Autowired
+    private JwtConfig jwtConfig;
     private final MemberRepository memberRepository;
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
         super(authenticationManager);
@@ -47,7 +49,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인
         String jwtToken = request.getHeader("Authorization").replace("Bearer ","");
 
-        String userId = JWT.require(Algorithm.HMAC512(SECRET_KEY)).build().verify(jwtToken).getClaim("userId").asString();
+        String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(jwtToken).getClaim("userId").asString();
         // 서명이 정상적으로 됨
         if (userId != null) {
             Optional<Member> memberOptional = memberRepository.findByUserId(userId);
