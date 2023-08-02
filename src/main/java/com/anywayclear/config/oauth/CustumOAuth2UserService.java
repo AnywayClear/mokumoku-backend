@@ -47,8 +47,10 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
         Optional<Member> memberOptional = memberRepository.findByEmailAddress(emailAddress);
 
         if (memberOptional.isPresent()) {
+            System.out.println("CustumOAuth2UserService : 이미 회원입니다");
             return memberOptional.get();
         } else {
+            System.out.println("CustumOAuth2UserService : 회원가입합니다");
             Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
             String nickname = (String) profile.get("nickname");
             String image = (String) profile.get("profile_image_url");

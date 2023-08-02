@@ -40,4 +40,5 @@ out/
 .DS_Store
 application.properties
 application.yml
+JwtProperties.java
 *.db
