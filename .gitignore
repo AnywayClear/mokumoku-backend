@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Java ###
+JwtProperties.java
+
 ### STS ###
 .apt_generated
 .classpath
@@ -40,5 +43,4 @@ out/
 .DS_Store
 application.properties
 application.yml
-JwtProperties.java
 *.db
