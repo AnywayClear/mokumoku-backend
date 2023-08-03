@@ -19,7 +19,7 @@ public class AuctionService {
     }
 
     @Transactional
-    public synchronized BiddingResponse Bidding(long auctionId, BiddingRequest request) {
+    public BiddingResponse Bidding(long auctionId, BiddingRequest request) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         if (request.getPrice() < auction.getPrice() + 100) { // 가격 기준 정해지면 수정할 로직
             throw new CustomException(INVALID_PRICE);
