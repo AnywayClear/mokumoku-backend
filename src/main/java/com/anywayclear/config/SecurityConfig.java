@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll() // 모든 요청 권한 허용 (추후 권한 설정해야함)
                 )
                 .oauth2Login(oauth2Login -> oauth2Login
-//                        .loginPage("/frontLoginPage") // OAuth 2.0 로그인을 처리할 때, 인증되지 않은 사용자를 전달할 로그인 페이지를 지정
+//                        .loginPage("https://mokumoku-git-develop-mokumoku.vercel.app") // OAuth 2.0 로그인을 처리할 때, 인증되지 않은 사용자를 전달할 로그인 페이지를 지정
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .userInfoEndpoint()
                                 .userService(custumOAuth2UserService)
