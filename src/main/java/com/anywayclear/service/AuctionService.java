@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.anywayclear.exception.ExceptionCode.*;
+import static com.anywayclear.exception.ExceptionCode.INVALID_AUCTION_ID;
+import static com.anywayclear.exception.ExceptionCode.INVALID_PRICE;
 
 @Service
 public class AuctionService {
@@ -19,7 +20,7 @@ public class AuctionService {
         this.auctionRepository = auctionRepository;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public BiddingResponse Bidding(long auctionId, BiddingRequest request) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         if (request.getPrice() < auction.getPrice() + 100) { // 가격 기준 정해지면 수정할 로직
