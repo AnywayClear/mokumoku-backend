@@ -38,6 +38,7 @@ out/
 
 ### added ###
 .DS_Store
+jwtsecret.properties
 application.properties
 application.yml
 *.db
