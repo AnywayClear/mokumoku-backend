@@ -32,7 +32,7 @@ public class AuctionService {
     }
 
     /**
-     * test용
+     * test용 - 자동 최소 비딩
      */
     @Transactional
     public BiddingResponse autoBidding(long auctionId, BiddingRequest request) {
