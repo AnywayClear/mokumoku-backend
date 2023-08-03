@@ -39,6 +39,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         System.out.println("JwtAuthorizationFilter : 인증이나 권한이 필요한 주소 요청이 됨");
 
         String jwtHeader = request.getHeader(jwtConfig.getHeader());
+        System.out.println("jwtHeader = " + jwtHeader);
 
         // JWT 토큰을 검증을 해서 정상적인 사용자인지 확인
         if (jwtHeader == null || !jwtHeader.startsWith(jwtConfig.getPrefix())) {
@@ -47,7 +48,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인
-        String jwtToken = request.getHeader("Authorization").replace("Bearer ","");
+        String jwtToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix()+ " ","");
 
         String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(jwtToken).getClaim("userId").asString();
         // 서명이 정상적으로 됨
@@ -64,6 +65,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             System.out.println("인가 완료");
+        } else {
+            //fail 서버애서 리다리렉트
         }
         chain.doFilter(request,response);
     }
