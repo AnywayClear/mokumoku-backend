@@ -5,7 +5,8 @@ import com.anywayclear.entity.Member;
 import com.anywayclear.repository.MemberRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,11 +27,12 @@ import java.util.Optional;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    @Autowired
-    private JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig;
     private final MemberRepository memberRepository;
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository, JwtConfig jwtConfig) {
         super(authenticationManager);
+        this.jwtConfig = jwtConfig;
         this.memberRepository = memberRepository;
     }
 
@@ -47,29 +49,45 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        // JWT 토큰을 검증해서 정상적인 사용자인지 확인
-        String jwtToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix()+ " ","");
+        try {
+            // JWT 토큰을 검증해서 정상적인 사용자인지 확인
+            String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix()+ " ","");
+            String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(accessToken).getClaim("userId").asString();
+            // 서명이 정상적으로 됨
+            if (userId != null) {
+                Optional<Member> memberOptional = memberRepository.findByUserId(userId);
+                memberOptional.ifPresent(this::processValidJwt);
 
-        String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(jwtToken).getClaim("userId").asString();
-        // 서명이 정상적으로 됨
-        if (userId != null) {
-            Optional<Member> memberOptional = memberRepository.findByUserId(userId);
-            Member member = memberOptional.get();
-            Map<String, Object> userAttributes = createNewAttribute(member);
-
-            DefaultOAuth2User oAuth2User = new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole())), userAttributes, "id");
-            // 기존엔 authentication 객체를 로그인해서 만들었음, 이번엔 JWT 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어줌
-            Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(oAuth2User, null, oAuth2User.getAuthorities()); // jwt인증 됐으니까 비밀번호 안넣고 강제로 authentication 만드는거 -> 따라서 비밀번호를 파라미터에 안넣고 null 넣음
-            // 강제로 시큐리티 세션에 접근하여 Authentication 객체를 저장
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            System.out.println("인가 완료");
-        } else {
-            //fail 서버애서 리다리렉트
+                System.out.println("인가 완료");
+            }
+            chain.doFilter(request,response);
+        } catch (TokenExpiredException ex) {
+            // 만료된 토큰 처리
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+            response.getWriter().write("Token has expired");
+        } catch (JWTDecodeException ex) {
+            // JWT 디코딩 예외 처리
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+            response.getWriter().write("Invalid JWT Token");
         }
-        chain.doFilter(request,response);
     }
+
+    private void processValidJwt(Member member) {
+        Map<String, Object> userAttributes = createNewAttribute(member);
+        DefaultOAuth2User oAuth2User = new DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority(member.getRole())),
+                userAttributes, "id"
+        );
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                oAuth2User, null, oAuth2User.getAuthorities()
+        );
+        storeAuthenticationInSecurityContext(authentication);
+    }
+
+    private void storeAuthenticationInSecurityContext(Authentication authentication) {
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
     private Map<String, Object> createNewAttribute(Member member) {
         Map<String, Object> newAttributes = new HashMap<>();
         newAttributes.put("id", member.getId());

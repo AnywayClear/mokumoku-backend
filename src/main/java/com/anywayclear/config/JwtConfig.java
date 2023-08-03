@@ -17,4 +17,6 @@ public class JwtConfig {
     private String key;
     private String prefix;
     private String header;
+    private String success;
+    private String fail;
 }
