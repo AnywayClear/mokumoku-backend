@@ -44,7 +44,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                         .build();
         response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + " " + jwtToken);
         response.addHeader("Set-Cookie", cookie.toString());
-        String redirectUrl = "http://localhost:3000/oauth2/redirect";
+        String redirectUrl = "http://localhost:3000";
         redirectStratgy.sendRedirect(request, response, redirectUrl);
     }
 }
