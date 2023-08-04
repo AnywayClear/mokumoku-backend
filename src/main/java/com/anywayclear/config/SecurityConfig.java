@@ -69,7 +69,7 @@ public class SecurityConfig {
                                 .userService(custumOAuth2UserService)
                                 .and()
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
-                                .failureHandler(oAuth2AuthenticationFailureHandler)
+//                                .failureHandler(oAuth2AuthenticationFailureHandler)
                 );
 
         // 로그아웃 설정
