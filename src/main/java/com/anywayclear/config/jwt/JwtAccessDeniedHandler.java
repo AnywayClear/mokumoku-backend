@@ -2,6 +2,7 @@ package com.anywayclear.config.jwt;
 
 import com.anywayclear.config.JwtConfig;
 import com.anywayclear.exception.CustomException;
+import com.anywayclear.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,13 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        log.error("JWT authorization failed : ", accessDeniedException.getMessage());
+        String errorMessage  = accessDeniedException.getMessage();
+        String errorJson = "{\"error\": \"" + errorMessage + "\"}";
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("JWT authorization failed: " + accessDeniedException.getMessage());
+
+        response.getWriter().write(errorJson);
     }
 }
