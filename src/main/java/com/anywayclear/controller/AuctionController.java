@@ -18,7 +18,7 @@ public class AuctionController {
     }
 
     @PostMapping("/{auction-id}")
-    public synchronized ResponseEntity<BiddingResponse> bidding(
+    public ResponseEntity<BiddingResponse> bidding(
             @PathVariable("auction-id") long auctionId,
             @RequestBody BiddingRequest request) {   // 인증정보 받기 추가 예정
         return ResponseEntity.ok(auctionService.Bidding(auctionId, request));
