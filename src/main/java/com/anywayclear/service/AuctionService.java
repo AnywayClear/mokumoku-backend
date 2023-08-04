@@ -22,6 +22,7 @@ public class AuctionService {
         this.auctionRepository = auctionRepository;
     }
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Transactional
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     public BiddingResponse Bidding(long auctionId, BiddingRequest request) {
