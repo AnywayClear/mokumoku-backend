@@ -5,8 +5,11 @@ import com.anywayclear.dto.response.BiddingResponse;
 import com.anywayclear.entity.Auction;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.AuctionRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.LockModeType;
 
 import static com.anywayclear.exception.ExceptionCode.INVALID_AUCTION_ID;
 import static com.anywayclear.exception.ExceptionCode.INVALID_PRICE;
