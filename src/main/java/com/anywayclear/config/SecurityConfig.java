@@ -72,6 +72,13 @@ public class SecurityConfig {
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 );
 
+        // 로그아웃 설정
+//        httpSecurity.logout()
+//                .addLogoutHandler()
+//                .logoutSuccessHandler()
+//                .logout
+//                .logoutSuccessUrl()
+
         // H2 사용을 위한 설정
         httpSecurity
                 .headers().frameOptions().disable();
