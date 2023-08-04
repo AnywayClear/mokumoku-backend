@@ -70,6 +70,7 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
                 .image(image)
                 .nickname(nickname)
                 .role("ROLE_CONSUMER")
+                .memberStatus(true)
                 .build();
 
         return memberRepository.save(member);

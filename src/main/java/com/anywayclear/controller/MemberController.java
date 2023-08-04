@@ -24,12 +24,6 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<Void> getMember(@Valid @RequestBody MemberCreateRequest request) {
-        final String id = memberService.createMember(request);
-        return ResponseEntity.created(URI.create("api/members/" + id)).build();
-    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<MemberResponse> getMemberDetail(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(memberService.getMemberByUserId(userId));

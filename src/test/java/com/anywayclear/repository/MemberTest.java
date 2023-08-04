@@ -1,7 +1,6 @@
 package com.anywayclear.repository;
 
 import com.anywayclear.entity.Member;
-import com.anywayclear.entity.MemberStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
