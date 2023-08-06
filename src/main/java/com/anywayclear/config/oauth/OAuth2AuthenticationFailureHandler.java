@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Component
 @RequiredArgsConstructor
@@ -21,16 +22,19 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        String redirectUrl = createRedirectUrl(exception);
+        String redirectUrl = jwtConfig.getFail();
+
+        String errorMessage = exception.getLocalizedMessage();
+        String errorJson = "{\"error\": \"" + errorMessage + "\"}";
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        PrintWriter writer = response.getWriter();
+        writer.print(errorJson);
+        writer.flush();
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
-    }
-
-    private String createRedirectUrl(AuthenticationException exception) {
-        String redirectUrl = jwtConfig.getFail();
-        redirectUrl = UriComponentsBuilder.fromUriString(redirectUrl)
-                .queryParam("error", exception.getLocalizedMessage())
-                .build().toUriString();
-        return redirectUrl;
     }
 }
