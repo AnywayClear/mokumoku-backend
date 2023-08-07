@@ -20,15 +20,15 @@ public class MemberCreateRequest {
     private String emailAddress;
     @NotBlank
     private String role;
+    @NotBlank
+    private boolean isDeleted;
     private String phoneNumber;
     private String description;
     private String companyRegistrationNumber;
     private String companyAddress;
-    @NotBlank
-    private boolean memberStatus;
 
     @Builder
-    public MemberCreateRequest(String nickname, String image, String emailAddress, String role,String phoneNumber, String description, String companyRegistrationNumber, String companyAddress, boolean memberStatus) {
+    public MemberCreateRequest(String nickname, String image, String emailAddress, String role,String phoneNumber, String description, String companyRegistrationNumber, String companyAddress, boolean isDeleted) {
         this.nickname = nickname;
         this.image = image;
         this.emailAddress = emailAddress;
@@ -37,6 +37,6 @@ public class MemberCreateRequest {
         this.description = description;
         this.companyRegistrationNumber = companyRegistrationNumber;
         this.companyAddress = companyAddress;
-        this.memberStatus = memberStatus;
+        this.isDeleted = isDeleted;
     }
 }

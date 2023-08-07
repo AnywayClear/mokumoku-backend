@@ -2,11 +2,14 @@ package com.anywayclear.config.jwt;
 
 import com.anywayclear.config.JwtConfig;
 import com.anywayclear.entity.Member;
+import com.anywayclear.exception.CustomException;
+import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,21 +59,41 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             // 서명이 정상적으로 됨
             if (userId != null) {
                 Optional<Member> memberOptional = memberRepository.findByUserId(userId);
-                memberOptional.ifPresent(this::processValidJwt);
-
-                System.out.println("인가 완료");
+                if (memberOptional.isPresent() && !memberOptional.get().isDeleted()) {
+                    processValidJwt(memberOptional.get());
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    sendJsonResponse(response, "잘못된 사용자 입니다");
+                    return;
+                }
             }
             chain.doFilter(request,response);
         } catch (TokenExpiredException ex) {
             // 만료된 토큰 처리
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
-            response.getWriter().write("Token has expired");
+            sendJsonResponse(response, "Token has expired");
         } catch (JWTDecodeException ex) {
             // JWT 디코딩 예외 처리
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-            response.getWriter().write("Invalid JWT Token");
+            sendJsonResponse(response, "Invalid JWT Token");
         }
     }
+
+    private void sendJsonResponse(HttpServletResponse response, String errorMessage) throws IOException {
+        response.setContentType("application/json"); // JSON 형식의 데이터라고 설정
+        response.setCharacterEncoding("UTF-8"); // 인코딩 설정
+
+        // JSON 데이터를 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> jsonMap = new HashMap<>();
+        jsonMap.put("httpStatus", String.valueOf(response.getStatus()));
+        jsonMap.put("error", errorMessage);
+        String json = objectMapper.writeValueAsString(jsonMap);
+
+        // JSON 데이터를 클라이언트로 전송
+        response.getWriter().write(json);
+    }
+
 
     private void processValidJwt(Member member) {
         Map<String, Object> userAttributes = createNewAttribute(member);
