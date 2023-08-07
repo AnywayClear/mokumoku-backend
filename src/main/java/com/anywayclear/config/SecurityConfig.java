@@ -58,6 +58,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS 메서드는 모두 허용
+                        .antMatchers("/api/alarms/**").authenticated()
                         .anyRequest().permitAll() // 모든 요청 권한 허용 (추후 권한 설정해야함)
                 );
 
