@@ -1,7 +1,9 @@
 package com.anywayclear.controller;
 
 import com.anywayclear.dto.request.MemberCreateRequest;
+import com.anywayclear.dto.request.MemberUpdateRequest;
 import com.anywayclear.dto.response.MemberResponse;
+import com.anywayclear.entity.Member;
 import com.anywayclear.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -27,5 +29,11 @@ public class MemberController {
     @GetMapping("/{userId}")
     public ResponseEntity<MemberResponse> getMemberDetail(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(memberService.getMemberByUserId(userId));
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<MemberResponse> updateMember(@PathVariable("userId") String userId, @RequestBody MemberUpdateRequest request){
+        MemberResponse updatedMember = memberService.updateMember(userId, request);
+        return ResponseEntity.ok(updatedMember);
     }
 }
