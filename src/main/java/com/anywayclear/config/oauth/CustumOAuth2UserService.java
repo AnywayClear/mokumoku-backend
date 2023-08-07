@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.anywayclear.entity.Member;
 import com.anywayclear.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -14,6 +13,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +25,7 @@ import java.util.UUID;
 @Service
 public class CustumOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -59,7 +58,8 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    private Member createMember(String emailAddress, String nickname, String image) {
+    @Transactional
+    public Member createMember(String emailAddress, String nickname, String image) {
         String id = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
 
