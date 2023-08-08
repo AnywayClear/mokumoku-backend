@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class BiddingRequest {
-    private String userId;
+//    private String userId;
     private int price;
 }

@@ -24,7 +24,7 @@ public class MemberTest {
         member.setDescription("싱싱한 딸기");
 //        member.setCompany_registration_number("123456");
 //        member.setCompany_address("Incheon");
-        member.setMemberStatus(true);
+//        member.setMemberStatus(true);
         Member savedMember = memberRepository.save(member);
 
 

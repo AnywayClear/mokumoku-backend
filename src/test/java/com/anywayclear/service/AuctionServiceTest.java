@@ -35,7 +35,7 @@ public class AuctionServiceTest {
         for (int i = 0; i < BIDDING_PEOPLE; i++) {
             service.execute(() -> {
                 try {
-                    auctionService.Bidding(1, new BiddingRequest("a232-1111", 2100));
+                    auctionService.Bidding(1,"a232-1111", new BiddingRequest(2100));
                     successCount.getAndIncrement();
                     System.out.println("입찰 성공");
                 } catch (ObjectOptimisticLockingFailureException e) {
