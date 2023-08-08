@@ -21,16 +21,15 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        String redirectUrl = createRedirectUrl(exception);
+        String redirectUrl = jwtConfig.getFail();
+
+        String errorMessage = exception.getLocalizedMessage();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        redirectUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+                .queryParam("error", errorMessage)
+                .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
-    }
-
-    private String createRedirectUrl(AuthenticationException exception) {
-        String redirectUrl = jwtConfig.getFail();
-        redirectUrl = UriComponentsBuilder.fromUriString(redirectUrl)
-                .queryParam("error", exception.getLocalizedMessage())
-                .build().toUriString();
-        return redirectUrl;
     }
 }

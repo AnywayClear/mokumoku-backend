@@ -1,12 +1,15 @@
 package com.anywayclear.service;
 
-import com.anywayclear.dto.request.MemberCreateRequest;
+import com.anywayclear.dto.request.MemberUpdateRequest;
+import com.anywayclear.dto.response.MemberDeleteResponse;
 import com.anywayclear.dto.response.MemberResponse;
 import com.anywayclear.entity.Member;
+import com.anywayclear.exception.CustomException;
+import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
@@ -18,12 +21,44 @@ public class MemberService {
     }
 
     public MemberResponse getMember(String id) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
         return MemberResponse.toResponse(member);
     }
 
     public MemberResponse getMemberByUserId(String userId) {
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
         return MemberResponse.toResponse(member);
+    }
+
+    @Transactional
+    public MemberResponse updateMember(String userId, MemberUpdateRequest request) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
+
+        // 요청으로 들어온 데이터로 기존 회원 정보 업데이트
+        if (request.getNickname() != null) {
+            member.setNickname(request.getNickname());
+        }
+
+        if (request.getImage() != null) {
+            member.setImage(request.getImage());
+        }
+
+        // SELLER 전환
+        if (request.getCompanyRegistrationNumber() != null) {
+            member.setRole("ROLE_SELLER");
+            member.setPhoneNumber(request.getPhoneNumber());
+            member.setDescription(request.getDescription());
+            member.setCompanyRegistrationNumber(request.getCompanyRegistrationNumber());
+            member.setCompanyAddress(request.getCompanyAddress());
+        }
+
+        return MemberResponse.toResponse(memberRepository.save(member));
+    }
+
+    @Transactional
+    public MemberDeleteResponse deleteMember(String userId) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
+        member.setDeleted(true);
+        return MemberDeleteResponse.toResponse(memberRepository.save(member));
     }
 }

@@ -1,12 +1,14 @@
 package com.anywayclear.config.oauth;
 
+import com.anywayclear.exception.CustomException;
+import com.anywayclear.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.anywayclear.entity.Member;
 import com.anywayclear.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,6 +16,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +28,7 @@ import java.util.UUID;
 @Service
 public class CustumOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -47,8 +49,7 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
         Optional<Member> memberOptional = memberRepository.findByEmailAddress(emailAddress);
 
         if (memberOptional.isPresent()) {
-            System.out.println("CustumOAuth2UserService : 이미 회원입니다");
-            return memberOptional.get();
+            return getMember(memberOptional);
         } else {
             System.out.println("CustumOAuth2UserService : 회원가입합니다");
             Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
@@ -59,7 +60,20 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    private Member createMember(String emailAddress, String nickname, String image) {
+    private Member getMember(Optional<Member> memberOptional) {
+        Member member = memberOptional.get();
+        if (member.isDeleted()) {
+            member.setDeleted(false);
+            memberRepository.save(member);
+            System.out.println("CustumOAuth2UserService : 재가입합니다");
+        } else {
+            System.out.println("CustumOAuth2UserService : 이미 회원입니다");
+        }
+        return member;
+    }
+
+    @Transactional
+    public Member createMember(String emailAddress, String nickname, String image) {
         String id = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
 
@@ -70,7 +84,7 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
                 .image(image)
                 .nickname(nickname)
                 .role("ROLE_CONSUMER")
-                .memberStatus(true)
+                .isDeleted(false)
                 .build();
 
         return memberRepository.save(member);
