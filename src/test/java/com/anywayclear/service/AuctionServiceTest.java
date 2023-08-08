@@ -16,14 +16,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+//@PropertySource("classpath:/jwtsecret.properties")
+//@PropertySource(value = {"jwtsecret.properties"})
 public class AuctionServiceTest {
     @Autowired
     private AuctionService auctionService;
+
     @Test
+//    @WithMockUser(username = "test",roles = {"CONSUMER","SELLER"})
     @DisplayName("현재 가격이 2000원이고 동시에 2명의 2100원 입찰이 들어오는 경우")
     void Bidding() throws InterruptedException {
         // given
-        final int BIDDING_PEOPLE=2;
+        final int BIDDING_PEOPLE = 2;
         AtomicInteger successCount = new AtomicInteger();
         ExecutorService service = Executors.newFixedThreadPool(10);
         CountDownLatch countDownLatch = new CountDownLatch(BIDDING_PEOPLE);
