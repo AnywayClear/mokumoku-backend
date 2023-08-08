@@ -27,7 +27,7 @@ public class RedisSubscribeService implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            System.out.println("try 진입");
+            Alarm alarm = mapper.readValue(message.getBody(), Alarm.class); // 받은 메시지 Alarm 객체로 역직렬화
 
             // 받은 알람 SSE 전송 ***** 추가 필요
 
