@@ -37,7 +37,7 @@ public class RedisConfig {
      * RedisTemplate: java Object를 redis에 저장하는 경우 사용
      */
     @Bean
-    public RedisTemplate<String, Alarm> redisTemplate() {
+    public RedisTemplate<String, Alarm> redisAlarmTemplate() {
         RedisTemplate<String, Alarm> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         // RedisTemplate 사용 시 Spring <-> Redis간 데이터 직렬화, 역직렬화에 사용하는 방식이 Jdk 직렬화 방식이기 때문
@@ -48,6 +48,17 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    @Bean
+    public RedisTemplate<String, String> redisTokenTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        // RedisTemplate 사용 시 Spring <-> Redis간 데이터 직렬화, 역직렬화에 사용하는 방식이 Jdk 직렬화 방식이기 때문
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
     /*
      * [MessageListenerAdapter]
      * 스프링에서 비동기 메시지를 지원하는 마지막 컴포넌트
