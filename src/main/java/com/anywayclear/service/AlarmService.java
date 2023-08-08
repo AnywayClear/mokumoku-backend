@@ -2,8 +2,6 @@ package com.anywayclear.service;
 
 import com.anywayclear.dto.response.*;
 import com.anywayclear.entity.Alarm;
-import com.anywayclear.repository.DibRepository;
-import com.anywayclear.repository.SubscribeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +26,7 @@ public class AlarmService  {
 
     // 리포지토리 대신 템플릿 사용
     private final RedisTemplate<String, Alarm> redisAlarmTemplate;
+
 
     // 발행 서비스
     private final RedisPublishService redisPublishService;
@@ -106,6 +106,7 @@ public class AlarmService  {
         List<Alarm> alarmList = subKeys.stream().map(k -> redisAlarmTemplate.opsForValue().get(k)).collect(Collectors.toList()); // 해당 키의 알람 리스트 저장
         return new AlarmResponseList(alarmList);
     }
+  
     public AlarmResponseList getDibAlarmList(String memberId) { // 해당 유저의 알림 리스트 불러오기
         // 패턴 매칭 사용 -> member:memberId:alarm:*
 

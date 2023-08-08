@@ -19,7 +19,6 @@ public class RedisSubscribeService implements MessageListener {
     // ObjectMaper.readValue를 사용해서 JSON을 파싱해서 자바 객체(ChatMessage.Class)로 바꿔줌
     private final ObjectMapper mapper = new ObjectMapper();
 
-
     /*
      * [onMessage]
      * 메시지를 subscribe했을 때 수행할 메서드
@@ -29,7 +28,6 @@ public class RedisSubscribeService implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         try {
             System.out.println("try 진입");
-            Alarm alarm = mapper.readValue(message.getBody(), Alarm.class); // 받은 메시지 Alarm 객체로 역직렬화
 
             // 받은 알람 SSE 전송 ***** 추가 필요
 
@@ -38,6 +36,7 @@ public class RedisSubscribeService implements MessageListener {
             String key = "member:" + alarm.getSender() + ":alarm:" + alarm.getId(); // key 설정 -> member:memberId:alarm:alarmId;
             redisAlarmTemplate.opsForValue().set(key, alarm); // 레디스에 저장
             redisAlarmTemplate.expire(key, 1, TimeUnit.MINUTES); // TTL 설정 ***** 테스트용
+
         } catch (Exception e) {
             e.printStackTrace();
         }

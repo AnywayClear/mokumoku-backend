@@ -2,10 +2,11 @@ package com.anywayclear.controller;
 
 import com.anywayclear.dto.response.AlarmResponseList;
 import com.anywayclear.service.AlarmService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -17,7 +18,6 @@ public class AlarmController {
 
     // 알림 서비스
     private final AlarmService alarmService;
-
 
     @PutMapping("/topic/{topicName}")
     public ResponseEntity<Void> createTopic(@PathVariable String topicName) {

@@ -59,6 +59,7 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());
         return redisTemplate;
     }
+  
     /*
      * [MessageListenerAdapter]
      * 스프링에서 비동기 메시지를 지원하는 마지막 컴포넌트

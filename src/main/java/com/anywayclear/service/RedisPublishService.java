@@ -13,7 +13,7 @@ public class RedisPublishService {
 
     @Autowired
     private RedisTemplate<String, Alarm> redisAlarmTemplate;
-
+  
     /*
      * [publish]
      * 토픽에 알림을 보내면 변환한 후 전송

@@ -1,16 +1,15 @@
 package com.anywayclear.service;
 
-import com.anywayclear.dto.request.MemberCreateRequest;
 import com.anywayclear.dto.request.MemberUpdateRequest;
+import com.anywayclear.dto.response.MemberDeleteResponse;
 import com.anywayclear.dto.response.MemberResponse;
 import com.anywayclear.entity.Member;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class MemberService {
@@ -46,7 +45,7 @@ public class MemberService {
 
         // SELLER 전환
         if (request.getCompanyRegistrationNumber() != null) {
-            member.setRole(request.getRole());
+            member.setRole("ROLE_SELLER");
             member.setPhoneNumber(request.getPhoneNumber());
             member.setDescription(request.getDescription());
             member.setCompanyRegistrationNumber(request.getCompanyRegistrationNumber());
@@ -56,5 +55,10 @@ public class MemberService {
         return MemberResponse.toResponse(memberRepository.save(member));
     }
 
-
+    @Transactional
+    public MemberDeleteResponse deleteMember(String userId) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
+        member.setDeleted(true);
+        return MemberDeleteResponse.toResponse(memberRepository.save(member));
+    }
 }
