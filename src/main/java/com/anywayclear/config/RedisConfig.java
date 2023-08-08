@@ -1,18 +1,11 @@
 package com.anywayclear.config;
 
 import com.anywayclear.entity.Alarm;
-import com.anywayclear.service.RedisSubscribeService;
-import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.AbstractRedisConnection;
-import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionProvider;
-import org.springframework.data.redis.connection.lettuce.LettuceSubscription;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -39,11 +32,6 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-//    @Bean
-//    public LettuceSubscription lettuceSubscription() {
-//        return new LettuceSubscription(MessageListener listener, StatefulRedisPubSubConnection<byte[], byte[]> pubsubConnection, LettuceConnectionProvider connectionProvider);
-//
-//    }
     /*
      * [RedisTemplate bean]
      * RedisTemplate: java Object를 redis에 저장하는 경우 사용
