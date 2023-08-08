@@ -51,7 +51,8 @@ public class SecurityConfig {
         // JWT Authorization 필터 추가
         httpSecurity
                 .addFilter(jwtAuthorizationFilter())
-                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler());
+                .exceptionHandling()
+                .accessDeniedHandler(jwtAccessDeniedHandler());
 
         // 요청 권한 설정
         httpSecurity
