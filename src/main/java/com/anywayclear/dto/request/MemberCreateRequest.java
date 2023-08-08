@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class MemberCreateRequest {
     private String emailAddress;
     @NotBlank
     private String role;
-    @NotBlank
+    @NotNull
     private boolean isDeleted;
     private String phoneNumber;
     private String description;
