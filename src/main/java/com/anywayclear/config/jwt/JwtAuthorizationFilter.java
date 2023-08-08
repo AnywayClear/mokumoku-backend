@@ -3,6 +3,7 @@ package com.anywayclear.config.jwt;
 import com.anywayclear.config.JwtConfig;
 import com.anywayclear.entity.Member;
 import com.anywayclear.exception.CustomException;
+import com.anywayclear.exception.ErrorResponse;
 import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
 import com.auth0.jwt.JWT;
@@ -10,6 +11,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,54 +48,43 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtHeader = request.getHeader(jwtConfig.getHeader());
         System.out.println("jwtHeader = " + jwtHeader);
 
-        // JWT 토큰을 검증을 해서 정상적인 사용자인지 확인
+        // JWT 토큰을 검증을 해서 정상적인 사용자인지 확인 (Header, Prefix 확인)
         if (jwtHeader == null || !jwtHeader.startsWith(jwtConfig.getPrefix())) {
-            chain.doFilter(request, response);   // 다시 필터 타게 넘김
+            sendJsonResponse(response, ExceptionCode.INVALID_TOKEN);
             return;
         }
 
+        // JWT 토큰을 검증해서 정상적인 사용자인지 확인 (토큰 검증)
         try {
-            // JWT 토큰을 검증해서 정상적인 사용자인지 확인
             String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix()+ " ","");
             String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(accessToken).getClaim("userId").asString();
-            // 서명이 정상적으로 됨
             if (userId != null) {
                 Optional<Member> memberOptional = memberRepository.findByUserId(userId);
                 if (memberOptional.isPresent() && !memberOptional.get().isDeleted()) {
                     processValidJwt(memberOptional.get());
-                } else {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    sendJsonResponse(response, "잘못된 사용자 입니다");
-                    return;
+                    chain.doFilter(request, response);
+                } else { // 탈퇴한 회원일 때
+                    sendJsonResponse(response, ExceptionCode.INVALID_DELETED_MEMBER);
                 }
+            } else { // 해당 토큰에 담긴 userId를 가진 사용자가 없을 때
+                sendJsonResponse(response, ExceptionCode.INVALID_TOKEN);
             }
-            chain.doFilter(request,response);
         } catch (TokenExpiredException ex) {
             // 만료된 토큰 처리
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
-            sendJsonResponse(response, "Token has expired");
+            sendJsonResponse(response, ExceptionCode.INVALID_EXPIRED_TOKEN);
         } catch (JWTDecodeException ex) {
             // JWT 디코딩 예외 처리
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-            sendJsonResponse(response, "Invalid JWT Token");
+            sendJsonResponse(response, ExceptionCode.INVALID_TOKEN);
         }
     }
 
-    private void sendJsonResponse(HttpServletResponse response, String errorMessage) throws IOException {
+    private void sendJsonResponse(HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
         response.setContentType("application/json"); // JSON 형식의 데이터라고 설정
         response.setCharacterEncoding("UTF-8"); // 인코딩 설정
-
-        // JSON 데이터를 생성
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> jsonMap = new HashMap<>();
-        jsonMap.put("httpStatus", String.valueOf(response.getStatus()));
-        jsonMap.put("error", errorMessage);
-        String json = objectMapper.writeValueAsString(jsonMap);
-
-        // JSON 데이터를 클라이언트로 전송
-        response.getWriter().write(json);
+        response.setStatus(exceptionCode.getCode());
+        ErrorResponse errorResponse = new ErrorResponse(exceptionCode.getHttpStatus(), exceptionCode.getMessage());
+        new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
     }
-
 
     private void processValidJwt(Member member) {
         Map<String, Object> userAttributes = createNewAttribute(member);

@@ -6,6 +6,7 @@ import com.anywayclear.dto.response.MemberResponse;
 import com.anywayclear.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class MemberController {
     public ResponseEntity<MemberDeleteResponse> deleteMember(@AuthenticationPrincipal OAuth2User oAuth2User) {
         String userId = (String) oAuth2User.getAttributes().get("userId");
         MemberDeleteResponse deletedMember = memberService.deleteMember(userId);
+        SecurityContextHolder.clearContext();
         return ResponseEntity.ok(deletedMember);
-
     }
 }
