@@ -54,11 +54,12 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .accessDeniedHandler(jwtAccessDeniedHandler());
 
-        // 요청 권한 설정
+        // 요청 설정
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS 메서드는 모두 허용
-                        .anyRequest().permitAll() // 모든 요청 권한 허용 (추후 권한 설정해야함)
+//                        .antMatchers("/api/members/**").authenticated() // jwt없이 요청한건지 재확인 가능
+                                .anyRequest().permitAll()
                 );
 
         // OAuth2 로그인 설정
