@@ -22,8 +22,11 @@ public class Auction extends BaseTime{
 
     private int price;
 
+    private String nickname;
+
     public Auction(Produce produce) {
         this.produce = produce;
         this.price = produce.getStartPrice();
+        this.nickname = "";
     }
 }
