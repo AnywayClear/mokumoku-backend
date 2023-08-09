@@ -27,6 +27,12 @@ public class AuctionController {
         String consumerId = (String) oAuth2User.getAttributes().get("userId");
         return ResponseEntity.ok(auctionService.Bidding(auctionId, consumerId, request));
     }
+
+    @PatchMapping("/{auction-id}/status")
+    public ResponseEntity<Void> changeFinished(@PathVariable("auction-id") long auctionId) {
+        auctionService.changeFinished(auctionId);
+        return ResponseEntity.ok().build();
+    }
     /*
      * 테스트용
      */

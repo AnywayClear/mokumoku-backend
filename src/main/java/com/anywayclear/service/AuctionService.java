@@ -12,6 +12,8 @@ import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import static com.anywayclear.exception.ExceptionCode.*;
 
@@ -31,6 +33,12 @@ public class AuctionService {
     @Transactional
     public BiddingResponse Bidding(long auctionId, String consumerId, BiddingRequest request) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
+        if (auction.getStatus() == 0 || auction.getStatus() == 2) {
+            throw new CustomException(INVALID_AUCTION_STATUS);
+        }
+        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
+            throw new CustomException(EXPIRED_AUCTION_TIME);
+        }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         if (request.getPrice() < auction.getPrice() + 100) { // 가격 기준 정해지면 수정할 로직
             throw new CustomException(INVALID_PRICE);
@@ -52,6 +60,11 @@ public class AuctionService {
         return new AuctionResponseList(auctionList);
     }
 
+    @Transactional
+    public void changeFinished(long auctionId) {
+        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
+        auction.setStatus(2);
+    }
     /**
      * test용 - 자동 최소 비딩
      */

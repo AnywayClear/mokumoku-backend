@@ -19,15 +19,11 @@ import static com.anywayclear.exception.ExceptionCode.INVALID_PRODUCE_ID;
 public class ProduceService {
     private final ProduceRepository produceRepository;
     private final AuctionRepository auctionRepository;
-    private final DibRepository dibRepository;
-    private final SubscribeRepository subscribeRepository;
     private final MemberRepository memberRepository;
 
-    public ProduceService(ProduceRepository produceRepository, AuctionRepository auctionRepository, DibRepository dibRepository, SubscribeRepository subscribeRepository, MemberRepository memberRepository) {
+    public ProduceService(ProduceRepository produceRepository, AuctionRepository auctionRepository, MemberRepository memberRepository) {
         this.produceRepository = produceRepository;
         this.auctionRepository = auctionRepository;
-        this.dibRepository = dibRepository;
-        this.subscribeRepository = subscribeRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -41,7 +37,7 @@ public class ProduceService {
     }
 
     @Transactional(readOnly = true)
-    public ProduceResponse getProduce(Long id, String userId) {
+    public ProduceResponse getProduce(Long id) {
         Produce produce = produceRepository.findById(id).orElseThrow(() -> new CustomException(INVALID_PRODUCE_ID));
         return ProduceResponse.toResponse(produce);
     }

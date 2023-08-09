@@ -63,7 +63,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인 (토큰 검증)
         try {
-            String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix()+ " ","");
+            String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix() + " ", "");
             String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(accessToken).getClaim("userId").asString();
             if (userId != null) {
                 Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
@@ -100,7 +100,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         response.setContentType("application/json"); // JSON 형식의 데이터라고 설정
         response.setCharacterEncoding("UTF-8"); // 인코딩 설정
         response.setStatus(exceptionCode.getCode());
-        ErrorResponse errorResponse = new ErrorResponse(exceptionCode.getHttpStatus(), exceptionCode.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exceptionCode, exceptionCode.getHttpStatus(), exceptionCode.getMessage());
         new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
     }
 
