@@ -24,6 +24,7 @@ public class Auction extends BaseTime{
 
     private String nickname;
 
+    private int status; // 0: 대기, 1: 경매중, 2: 경매 완료
     public Auction(Produce produce) {
         this.produce = produce;
         this.price = produce.getStartPrice();

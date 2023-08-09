@@ -12,13 +12,15 @@ public class AuctionResponse {
     private final int price;
     private final String nickname;
     private final LocalDateTime updatedAt;
+    private final int status;
 
     @Builder
-    public AuctionResponse(Long id, int price, String nickname, LocalDateTime updatedAt) {
+    public AuctionResponse(Long id, int price, String nickname, LocalDateTime updatedAt, int status) {
         this.id = id;
         this.price = price;
         this.nickname = nickname;
         this.updatedAt = updatedAt;
+        this.status = status;
     }
 
     public static AuctionResponse toResponse(Auction auction) {
@@ -27,6 +29,7 @@ public class AuctionResponse {
                 .price(auction.getPrice())
                 .nickname(auction.getNickname())
                 .updatedAt(auction.getUpdatedAt())
+                .status(auction.getStatus())
                 .build();
     }
 }

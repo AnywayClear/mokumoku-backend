@@ -40,9 +40,8 @@ public class ProduceController {
 
     @GetMapping("/{id}")
 //    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
-    public ResponseEntity<ProduceResponse> getProduce(@AuthenticationPrincipal OAuth2User oAuth2User, @Positive @PathVariable("id") long id) {
-        String userId = (String) oAuth2User.getAttributes().get("userId");
-        return ResponseEntity.ok(produceService.getProduce(id, userId));
+    public ResponseEntity<ProduceResponse> getProduce(@Positive @PathVariable("id") long id) {
+        return ResponseEntity.ok(produceService.getProduce(id));
     }
 
     @GetMapping
