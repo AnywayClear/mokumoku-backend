@@ -2,6 +2,7 @@ package com.anywayclear.config.jwt;
 
 import com.anywayclear.config.JwtConfig;
 import com.anywayclear.entity.Member;
+import com.anywayclear.exception.CustomException;
 import com.anywayclear.exception.ErrorResponse;
 import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
@@ -27,7 +28,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
