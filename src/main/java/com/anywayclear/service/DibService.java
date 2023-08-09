@@ -11,9 +11,14 @@ import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.DibRepository;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 import static com.anywayclear.exception.ExceptionCode.INVALID_PRODUCE_ID;
@@ -40,13 +45,16 @@ public class DibService {
 
     public DibResponse getDib(Long id) {
         Dib dib = dibRepository.findById(id).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
-        return DibResponse.toResponse(dib);
+        return DibResponse.toResponse(dib.getProduce());
     }
 
-    public DibResponseList getDibList(String userId) { // 찜 중인 농산물 리스트 반환
+    public DibResponseList getDibList(String userId, Pageable pageable) { // 찜 중인 농산물 리스트 반환
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
-        List<Dib> dibList = dibRepository.findAllByConsumer(member);
-        return new DibResponseList(dibList);
+        List<Produce> dibList = dibRepository.findAllByConsumer(member)
+                .stream()
+                .map(Dib::getProduce)
+                .collect(Collectors.toList());
+        return new DibResponseList(dibList, pageable);
     }
 
     public IsDibResponse getIsDib(String userId, long produceId) {
