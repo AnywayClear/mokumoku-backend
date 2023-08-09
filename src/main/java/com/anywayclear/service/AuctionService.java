@@ -12,9 +12,7 @@ import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-
 import static com.anywayclear.exception.ExceptionCode.*;
 
 @Service
