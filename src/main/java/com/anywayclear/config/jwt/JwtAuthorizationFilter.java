@@ -43,11 +43,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         System.out.println("JwtAuthorizationFilter : 인증이나 권한이 필요한 주소 요청이 됨");
 
-        // 특정 경로에 대한 요청이라면 JWT 검사를 하지 않음
-        if (!request.getRequestURI().startsWith("/api/auctions")) {
-            chain.doFilter(request, response);
-            return;
-        }
+//        // 특정 경로에 대한 요청이라면 JWT 검사를 하지 않음
+//        if (!request.getRequestURI().startsWith("/api/auctions")) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         String jwtHeader = request.getHeader(jwtConfig.getHeader());
         System.out.println("jwtHeader = " + jwtHeader);
