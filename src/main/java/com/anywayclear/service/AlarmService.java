@@ -2,13 +2,17 @@ package com.anywayclear.service;
 
 import com.anywayclear.dto.response.*;
 import com.anywayclear.entity.Alarm;
+import com.anywayclear.repository.SSEInMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 
 import java.util.List;
@@ -43,6 +47,8 @@ public class AlarmService  {
     // topic 이름으로 topic 정보를 가져와 메시지를 발송할 수 있도록 Map에 저장
     private Map<String, ChannelTopic> channels;
 
+    private SSEInMemoryRepository sseRepository;
+
     @PostConstruct
     public void init() { // topic 정보를 담을 Map을 초기화
         channels = new ConcurrentHashMap<>(); // topicName : ChannelTopic obj
@@ -55,7 +61,7 @@ public class AlarmService  {
         return topicName;
     }
 
-    public void subscribeTopic(String topicName) {
+    public SseEmitter subscribeTopic(String topicName, String userId, String lastEventId, LocalDateTime now) {
 //        RedisPubSubAdapter<String, String> listener = new RedisPubSubAdapter<String, String>() {
 //            @Override
 //            public void message(String channel, String message) {
@@ -69,14 +75,47 @@ public class AlarmService  {
 //        async.subscribe(topicName);
 //
 //// application flow continues
+
+        // Pub/Sub Topic 찾아서 리스너 연결
         ChannelTopic topic = channels.get(topicName);
         redisMessageListener.addMessageListener(redisSubscribeService, topic);
+
+        // SSE 연결
+        // emitter에 키에 토픽, 유저 정보를 담기
+        // 알람 내용에 토픽 정보를 넣어 해당 토픽으로 에미터를 검색해 sse 데이터 보내기
+        SseEmitter emitter = new SseEmitter(Long.parseLong("100000"));
+        String key = userId + ":" + topicName + ":" +now.toString();
+
+        emitter.onCompletion(() -> {
+            System.out.println("onCompletion callback");
+            sseRepository.remove(key);
+        });
+        emitter.onTimeout(() -> {
+            System.out.println("onTimeout callback");
+            // 만료시 Repository에서 삭제
+            emitter.complete();
+        });
+
+        sseRepository.put(key, emitter);
+        try {
+            emitter.send(SseEmitter.event()
+                    .name("CONNCECTED")
+                    .id(key)
+                    .data("subscribe"));
+        } catch (IOException exception) {
+            sseRepository.remove(key);
+            System.out.println("SSE Exception: " + exception.getMessage());
+        }
+
+        return emitter;
     }
 
     public void pushAlarm(String topicName, String sender, String context) { // 알람 전송
         ChannelTopic topic = channels.get(topicName); // 토픽 객체 불러오기
         Alarm alarm = Alarm.builder().sender(sender).context(context).build(); // 알람 객체 생성
         redisPublishService.publish(topic, alarm); // 알람 전송
+
+
     }
 
     public void deleteTopic(String topicName) { // 토픽 제거
@@ -92,7 +131,7 @@ public class AlarmService  {
         SubscribeResponseList subscribeResponseList = subscribeService.getSubscribeList(memberId);
         Set<String> keys = new HashSet<>(); // Set을 사용하여 중복된 값 제거
         for (SubscribeResponse response : subscribeResponseList.getSubscribeResponseList()) {
-            String seller = response.getSeller().getUserId(); // Response 객체에서 sender 필드 값을 추출
+            String seller = response.getUserId(); // Response 객체에서 sender 필드 값을 추출
             keys.add(seller); // keys 집합에 sender 값 추가
         }
 
