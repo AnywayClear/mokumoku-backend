@@ -23,6 +23,7 @@ public enum ExceptionCode {
     INVALID_TOKEN(UNAUTHORIZED, "잘못된 토큰입니다", 401),
     INVALID_EXPIRED_TOKEN(UNAUTHORIZED, "만료된 토큰입니다", 401),
     INVALID_DELETED_MEMBER(UNAUTHORIZED, "탈퇴한 회원입니다", 401),
+    INVALID_DUPLICATED_AUTHENTICATION(UNAUTHORIZED, "중복 로그인 입니다", 401),
 
     // 403 Forbidden : 자원에 대한 권한 없음
     INVALID_AUTH(FORBIDDEN, "권한이 없습니다", 403),

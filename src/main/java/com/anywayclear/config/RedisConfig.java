@@ -49,7 +49,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTokenTemplate() {
+    public RedisTemplate<String, String> redisAuthenticatedUserTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         // RedisTemplate 사용 시 Spring <-> Redis간 데이터 직렬화, 역직렬화에 사용하는 방식이 Jdk 직렬화 방식이기 때문
