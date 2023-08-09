@@ -51,7 +51,7 @@ public class SubscribeService {
         } else { // 소비자 일 경우
             List<Subscribe> subscribeList = subscribeRepository.findAllByConsumer(member);
             for (Subscribe subscribe : subscribeList) {
-                memberList.add(subscribe.getConsumer());
+                memberList.add(subscribe.getSeller());
             }
         }
         return new SubscribeResponseList(memberList);
