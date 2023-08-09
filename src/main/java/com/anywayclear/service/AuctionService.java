@@ -7,11 +7,8 @@ import com.anywayclear.entity.Member;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.repository.MemberRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.LockModeType;
 
 import static com.anywayclear.exception.ExceptionCode.*;
 
@@ -27,7 +24,6 @@ public class AuctionService {
     }
 
     @Transactional
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     public BiddingResponse Bidding(long auctionId, String consumerId,BiddingRequest request) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
