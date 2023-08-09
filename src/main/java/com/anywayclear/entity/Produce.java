@@ -48,7 +48,7 @@ public class Produce {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member seller;
 
     @OneToMany(mappedBy = "produce")
     private List<Auction> auctionList = new ArrayList<>();

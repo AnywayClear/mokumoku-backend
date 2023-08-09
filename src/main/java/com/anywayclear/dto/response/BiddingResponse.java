@@ -3,14 +3,20 @@ package com.anywayclear.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class BiddingResponse {
     private final String userId;
+    private final String nickname;
+    private final LocalDateTime updatedAt;
     private final int price;
 
     @Builder
-    public BiddingResponse(String userId, int price) {
+    public BiddingResponse(String userId, String nickname, LocalDateTime updatedAt, int price) {
         this.userId = userId;
+        this.nickname = nickname;
+        this.updatedAt = updatedAt;
         this.price = price;
     }
 

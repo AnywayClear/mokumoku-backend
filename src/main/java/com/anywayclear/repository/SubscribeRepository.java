@@ -12,4 +12,6 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
     List<Subscribe> findAllByConsumer(Member member);
     List<Subscribe> findAllBySeller(Member member);
 
+    Optional<Subscribe> findByConsumerAndSeller(Member consumer, Member seller);
+
 }

@@ -3,15 +3,20 @@ package com.anywayclear.service;
 import com.anywayclear.dto.request.DibCreateRequest;
 import com.anywayclear.dto.response.DibResponse;
 import com.anywayclear.dto.response.DibResponseList;
+import com.anywayclear.dto.response.IsDibResponse;
 import com.anywayclear.entity.Dib;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
+import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.DibRepository;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
+import static com.anywayclear.exception.ExceptionCode.INVALID_PRODUCE_ID;
 
 @Service
 public class DibService {
@@ -42,5 +47,12 @@ public class DibService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
         List<Dib> dibList = dibRepository.findAllByConsumer(member);
         return new DibResponseList(dibList);
+    }
+
+    public IsDibResponse getIsDib(String userId, long produceId) {
+        Produce produce = produceRepository.findById(produceId).orElseThrow(() -> new CustomException(INVALID_PRODUCE_ID));
+        Member consumer = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        boolean isDib = dibRepository.findByConsumerAndProduce(consumer, produce).isPresent();
+        return new IsDibResponse(isDib);
     }
 }
