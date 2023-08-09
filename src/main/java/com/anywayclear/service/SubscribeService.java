@@ -1,17 +1,19 @@
 package com.anywayclear.service;
 
 import com.anywayclear.dto.request.SubscribeCreateRequest;
+import com.anywayclear.dto.response.IsSubResponse;
 import com.anywayclear.dto.response.SubscribeResponse;
 import com.anywayclear.dto.response.SubscribeResponseList;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Subscribe;
+import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.SubscribeRepository;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 
 @Service
 public class SubscribeService {
@@ -47,5 +49,12 @@ public class SubscribeService {
             subscribeList = subscribeRepository.findAllByConsumer(member);
         }
         return new SubscribeResponseList(subscribeList);
+    }
+
+    public IsSubResponse getIsSub(String consumerId, String sellerId) {
+        Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        Member seller = memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        boolean isSub = subscribeRepository.findByConsumerAndSeller(consumer, seller).isPresent();
+        return new IsSubResponse(isSub);
     }
 }
