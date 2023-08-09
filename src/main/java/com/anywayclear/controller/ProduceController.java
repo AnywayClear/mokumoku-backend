@@ -2,8 +2,10 @@ package com.anywayclear.controller;
 
 
 import com.anywayclear.dto.request.ProduceCreateRequest;
+import com.anywayclear.dto.response.AuctionResponseList;
 import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.dto.response.ProduceResponseList;
+import com.anywayclear.service.AuctionService;
 import com.anywayclear.service.ProduceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,29 +22,36 @@ import java.util.List;
 //@Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
 public class ProduceController {
     private final ProduceService produceService;
+    private final AuctionService auctionService;
 
-    public ProduceController(ProduceService produceService) {
+    public ProduceController(ProduceService produceService, AuctionService auctionService) {
         this.produceService = produceService;
+        this.auctionService = auctionService;
     }
 
     @PostMapping
 //    @PreAuthorize("hasRole('ROLE_CONSUMER')")
 //    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
     public ResponseEntity<Void> createProduce(@AuthenticationPrincipal OAuth2User oAuth2User, @Valid @RequestBody ProduceCreateRequest request) {
-        String sellerId=(String) oAuth2User.getAttributes().get("userId");
-        final Long id = produceService.createProduce(request,sellerId);
+        String sellerId = (String) oAuth2User.getAttributes().get("userId");
+        final Long id = produceService.createProduce(request, sellerId);
         return ResponseEntity.created(URI.create("/api/produces/" + id)).build();
     }
 
     @GetMapping("/{id}")
 //    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
     public ResponseEntity<ProduceResponse> getProduce(@AuthenticationPrincipal OAuth2User oAuth2User, @Positive @PathVariable("id") long id) {
-        String userId=(String) oAuth2User.getAttributes().get("userId");
-        return ResponseEntity.ok(produceService.getProduce(id,userId));
+        String userId = (String) oAuth2User.getAttributes().get("userId");
+        return ResponseEntity.ok(produceService.getProduce(id, userId));
     }
 
     @GetMapping
     public ResponseEntity<ProduceResponseList> getProduceList(@RequestParam List<Integer> statusNoList) {
         return ResponseEntity.ok(produceService.getProduceList(statusNoList));
+    }
+
+    @GetMapping("/{id}/auctions")
+    public ResponseEntity<AuctionResponseList> getAuctionList(@PathVariable long id) {
+        return ResponseEntity.ok(auctionService.getAuctionList(id));
     }
 }

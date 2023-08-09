@@ -27,7 +27,6 @@ public class AuctionController {
         String consumerId = (String) oAuth2User.getAttributes().get("userId");
         return ResponseEntity.ok(auctionService.Bidding(auctionId, consumerId, request));
     }
-
     /*
      * 테스트용
      */
