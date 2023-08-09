@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import static com.anywayclear.exception.ExceptionCode.INVALID_AUTH;
-import static com.anywayclear.exception.ExceptionCode.INVALID_RESOURCE;
+import static com.anywayclear.exception.ExceptionCode.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.web.client.HttpClientErrorException.Forbidden;
 
@@ -21,14 +20,16 @@ public class GlobalExceptionHandler {
     private ErrorResponse handleCustomException(CustomException customException) {
         return ErrorResponse.of(customException.getExceptionCode());
     }
+
     /**
-    * 로그인이 필요한 경우 임시 추가
+     * 로그인이 필요한 경우 임시 추가
      */
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(UNAUTHORIZED)
     private ErrorResponse handleUnAuthorizedException() {
-        return new ErrorResponse(UNAUTHORIZED,"로그인후 진행해주세요.");
+        return new ErrorResponse(INVALID_TOKEN, UNAUTHORIZED, "로그인후 진행해주세요.");
     }
+
     /**
      * 자원에 대한 권한 없음
      */
@@ -47,12 +48,12 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(INVALID_RESOURCE);
     }
 
-    /**
-     * 그 외 에러
-     */
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
-    private ErrorResponse handleException(Exception e) {
-        return new ErrorResponse(INTERNAL_SERVER_ERROR,e.getMessage());
-    }
+//    /**
+//     * 그 외 에러
+//     */
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(INTERNAL_SERVER_ERROR)
+//    private ErrorResponse handleException(Exception e) {
+//        return new ErrorResponse(INTERNAL_SERVER_ERROR,e.getMessage());
+//    }
 }

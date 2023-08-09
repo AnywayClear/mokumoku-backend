@@ -11,7 +11,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,28 +28,29 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtConfig jwtConfig;
     private final MemberRepository memberRepository;
+    private final RedisTemplate<String, String> redisAuthenticatedUserTemplate;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository, JwtConfig jwtConfig) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository, JwtConfig jwtConfig, RedisTemplate<String, String> redisAuthenticatedUserTemplate) {
         super(authenticationManager);
         this.jwtConfig = jwtConfig;
         this.memberRepository = memberRepository;
+        this.redisAuthenticatedUserTemplate = redisAuthenticatedUserTemplate;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         System.out.println("JwtAuthorizationFilter : 인증이나 권한이 필요한 주소 요청이 됨");
 
-        // 특정 경로에 대한 요청이라면 JWT 검사를 하지 않음
-        if (request.getRequestURI().startsWith("/api/")) {
-            chain.doFilter(request, response);
-            return;
-        }
+//        // 특정 경로에 대한 요청이라면 JWT 검사를 하지 않음
+//        if (!request.getRequestURI().startsWith("/api/auctions")) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         String jwtHeader = request.getHeader(jwtConfig.getHeader());
         System.out.println("jwtHeader = " + jwtHeader);
@@ -62,13 +63,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인 (토큰 검증)
         try {
-            String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix()+ " ","");
+            String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix() + " ", "");
             String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(accessToken).getClaim("userId").asString();
             if (userId != null) {
-                Optional<Member> memberOptional = memberRepository.findByUserId(userId);
-                if (memberOptional.isPresent() && !memberOptional.get().isDeleted()) {
-                    processValidJwt(memberOptional.get());
+                Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
+                if (!member.isDeleted()) {
+                    if (checkDuplicatedLogin(userId, accessToken, response)) return; // 중복로그인 시 예외처리
+                    processValidJwt(member);
                     chain.doFilter(request, response);
+
                 } else { // 탈퇴한 회원일 때
                     sendJsonResponse(response, ExceptionCode.INVALID_DELETED_MEMBER);
                 }
@@ -84,11 +87,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
 
+    private boolean checkDuplicatedLogin(String userId, String token, HttpServletResponse response) throws IOException {
+        String tokenInRedis = redisAuthenticatedUserTemplate.opsForValue().get(userId);
+        if (tokenInRedis != null && !tokenInRedis.equals(token)) { // redis에 저장된 토큰과 다른 값이면
+            sendJsonResponse(response, ExceptionCode.INVALID_DUPLICATED_AUTHENTICATION); // 중복로그인 토큰 만료 처리
+            return true;
+        }
+        return false;
+    }
+
     private void sendJsonResponse(HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
         response.setContentType("application/json"); // JSON 형식의 데이터라고 설정
         response.setCharacterEncoding("UTF-8"); // 인코딩 설정
         response.setStatus(exceptionCode.getCode());
-        ErrorResponse errorResponse = new ErrorResponse(exceptionCode.getHttpStatus(), exceptionCode.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exceptionCode, exceptionCode.getHttpStatus(), exceptionCode.getMessage());
         new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
     }
 
