@@ -1,5 +1,6 @@
 package com.anywayclear.dto.response;
 
+import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Subscribe;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 public class SubscribeResponseList {
     private List<SubscribeResponse> subscribeResponseList;
 
-    public SubscribeResponseList(final List<Subscribe> subscribeList) {
+    public SubscribeResponseList(final List<Member> subscribeList) {
         this.subscribeResponseList = subscribeList.stream()
                 .map(SubscribeResponse::toResponse)
                 .collect(Collectors.toList());

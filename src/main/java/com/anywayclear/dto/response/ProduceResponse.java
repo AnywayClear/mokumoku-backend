@@ -15,6 +15,7 @@ public class ProduceResponse {
     private final long id;
     private final String name;
     private final String seller;
+    private final String sellerId;
     private final String description;
     private final String image;
     private final int startPrice;
@@ -31,6 +32,7 @@ public class ProduceResponse {
         this.id = id;
         this.name = name;
         this.seller = member.getNickname();
+        this.sellerId = member.getUserId();
 //        this.seller = "testSeller";
         this.description = description;
         this.image = image;

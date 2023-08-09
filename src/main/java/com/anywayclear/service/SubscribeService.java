@@ -11,7 +11,9 @@ import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.SubscribeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 
@@ -34,21 +36,25 @@ public class SubscribeService {
 
     public SubscribeResponse getSubscribe(Long id) {
         Subscribe subscribe = subscribeRepository.findById(id).orElseThrow(() -> new RuntimeException());
-        return SubscribeResponse.toResponse(subscribe);
+        return SubscribeResponse.toResponse(subscribe.getSeller());
     }
 
     public SubscribeResponseList getSubscribeList(String userId) {
         // @AuthenticationPrincipal OAuth2User oauthuser
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
-        System.out.println("--------member--------");
-        System.out.println(member);
-        List<Subscribe> subscribeList;
+        List<Member> memberList = new ArrayList<>();
         if (member.getRole().equals("ROLE_SELLER")) { // 판매자 일 경우
-            subscribeList = subscribeRepository.findAllBySeller(member);
+            List<Subscribe> subscribeList = subscribeRepository.findAllBySeller(member);
+            for (Subscribe subscribe : subscribeList) {
+                memberList.add(subscribe.getConsumer());
+            }
         } else { // 소비자 일 경우
-            subscribeList = subscribeRepository.findAllByConsumer(member);
+            List<Subscribe> subscribeList = subscribeRepository.findAllByConsumer(member);
+            for (Subscribe subscribe : subscribeList) {
+                memberList.add(subscribe.getConsumer());
+            }
         }
-        return new SubscribeResponseList(subscribeList);
+        return new SubscribeResponseList(memberList);
     }
 
     public IsSubResponse getIsSub(String consumerId, String sellerId) {

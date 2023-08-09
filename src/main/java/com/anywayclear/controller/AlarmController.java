@@ -7,9 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,9 +30,12 @@ public class AlarmController {
         return ResponseEntity.created(URI.create("api/alarms/" + topic)).build();
     }
 
-    @PostMapping("/topic/{topicName}/subscribe")
-    public void subscribeTopic(@PathVariable String topicName) {
-        alarmService.subscribeTopic(topicName);
+    @PostMapping(value = "/topic/{topicName}/subscribe", produces = "text/event-stream")
+    public ResponseEntity<SseEmitter> subscribeTopic(@PathVariable String topicName, @AuthenticationPrincipal OAuth2User oAuth2User,
+                                                     @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
+//        alarmService.subscribeTopic(topicName);
+        System.out.println("OAuth UserName : " + oAuth2User);
+        return new ResponseEntity<>(alarmService.subscribeTopic(topicName, "username", lastEventId, LocalDateTime.now()), HttpStatus.OK);
     }
 
     @PostMapping("/topic/{topicName}")
