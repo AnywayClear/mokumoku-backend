@@ -47,12 +47,12 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(INVALID_RESOURCE);
     }
 
-    /**
-     * 그 외 에러
-     */
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
-    private ErrorResponse handleException(Exception e) {
-        return new ErrorResponse(INTERNAL_SERVER_ERROR,e.getMessage());
-    }
+//    /**
+//     * 그 외 에러
+//     */
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(INTERNAL_SERVER_ERROR)
+//    private ErrorResponse handleException(Exception e) {
+//        return new ErrorResponse(INTERNAL_SERVER_ERROR,e.getMessage());
+//    }
 }
