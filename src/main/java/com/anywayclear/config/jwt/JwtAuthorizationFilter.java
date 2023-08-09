@@ -2,6 +2,7 @@ package com.anywayclear.config.jwt;
 
 import com.anywayclear.config.JwtConfig;
 import com.anywayclear.entity.Member;
+import com.anywayclear.exception.CustomException;
 import com.anywayclear.exception.ErrorResponse;
 import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
@@ -10,6 +11,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,7 +46,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         System.out.println("JwtAuthorizationFilter : 인증이나 권한이 필요한 주소 요청이 됨");
 
         // 특정 경로에 대한 요청이라면 JWT 검사를 하지 않음
-        if (!request.getRequestURI().startsWith("/api/auctions")) {
+        if (request.getRequestURI().startsWith("/api/")) {
             chain.doFilter(request, response);
             return;
         }
