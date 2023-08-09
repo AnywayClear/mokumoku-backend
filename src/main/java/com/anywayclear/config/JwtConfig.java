@@ -19,4 +19,7 @@ public class JwtConfig {
     private String header;
     private String success;
     private String fail;
+    private String second;
+    private String minute;
+    private String hour;
 }

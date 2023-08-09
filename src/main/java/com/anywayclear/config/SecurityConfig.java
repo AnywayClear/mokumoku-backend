@@ -9,6 +9,7 @@ import com.anywayclear.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -35,6 +36,7 @@ public class SecurityConfig {
     private final JwtConfig jwtConfig;
     private final MemberRepository memberRepository;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RedisTemplate<String, String> redisAuthenticatedUserTemplate;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -93,7 +95,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(authenticationManagerBean(), memberRepository, jwtConfig);
+        return new JwtAuthorizationFilter(authenticationManagerBean(), memberRepository, jwtConfig, redisAuthenticatedUserTemplate);
     }
 
     @Bean
