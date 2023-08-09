@@ -3,6 +3,8 @@ package com.anywayclear.repository;
 import com.anywayclear.entity.Dib;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

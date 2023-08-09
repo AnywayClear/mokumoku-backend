@@ -10,19 +10,48 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DibResponse {
-    private Member consumer;
-    private Produce produce;
+//    private Member consumer;
+//    private Produce produce;
+//
+//    @Builder
+//    public DibResponse(Member consumer, Produce produce) {
+//        this.consumer = consumer;
+//        this.produce = produce;
+//    }
+//
+//    public static DibResponse toResponse(Dib dib) {
+//        return DibResponse.builder()
+//                .consumer(dib.getConsumer())
+//                .produce(dib.getProduce())
+//                .build();
+//    }
+
+    // 이미지 url, 판매자이름, 판매자 식별 (닉네임 or ID 판매자 타인페이지 이동용), 제목, 경매 ID, 시작금액
+    private Long id;
+    private String title;
+    private int startPrice;
+    private String image;
+    private String sellerName;
+    private String userId;
 
     @Builder
-    public DibResponse(Member consumer, Produce produce) {
-        this.consumer = consumer;
-        this.produce = produce;
+    public DibResponse(Long id, String title, int startPrice, String image, String sellerName, String userId) {
+        this.id = id;
+        this.title = title;
+        this.startPrice = startPrice;
+        this.image = image;
+        this.sellerName = sellerName;
+        this.userId = userId;
     }
 
-    public static DibResponse toResponse(Dib dib) {
+    public static DibResponse toResponse(Produce produce) {
         return DibResponse.builder()
-                .consumer(dib.getConsumer())
-                .produce(dib.getProduce())
+                .id(produce.getId())
+                .title(produce.getName())
+                .startPrice(produce.getStartPrice())
+                .image(produce.getImage())
+                .sellerName(produce.getSeller().getNickname())
+                .userId(produce.getSeller().getUserId())
                 .build();
     }
 }
