@@ -1,12 +1,16 @@
 package com.anywayclear.service;
 
 import com.anywayclear.dto.request.ProduceCreateRequest;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.dto.response.ProduceResponse;
-import com.anywayclear.dto.response.ProduceResponseList;
 import com.anywayclear.entity.Auction;
 import com.anywayclear.entity.Produce;
 import com.anywayclear.exception.CustomException;
-import com.anywayclear.repository.*;
+import com.anywayclear.repository.AuctionRepository;
+import com.anywayclear.repository.MemberRepository;
+import com.anywayclear.repository.ProduceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +48,9 @@ public class ProduceService {
     }
 
     @Transactional(readOnly = true)
-    public ProduceResponseList getProduceList(List<Integer> statusNoList) {
-        List<Produce> produceList = produceRepository.findByStatusIn(statusNoList);
-        return new ProduceResponseList(produceList);
+    public MultiResponse<ProduceResponse,Produce> getProducePage(List<Integer> statusNoList, Pageable pageable) {
+        Page<Produce> producePage = produceRepository.findAllByStatusIn(statusNoList,pageable);
+        List<ProduceResponse> produceResponseList = producePage.map(ProduceResponse::toResponse).getContent();
+        return new MultiResponse<>(produceResponseList,producePage);
     }
 }
