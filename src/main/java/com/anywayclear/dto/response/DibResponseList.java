@@ -15,13 +15,11 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DibResponseList {
-    private Page<DibResponse> dibResponseList;
+    private List<DibResponse> dibResponseList;
 
-    public DibResponseList(final List<Produce> dibList, Pageable pageable) {
-        this.dibResponseList = new PageImpl<>(dibList.stream()
+    public DibResponseList(final List<Dib> dibList) {
+        this.dibResponseList = dibList.stream()
                 .map(DibResponse::toResponse)
-                .collect(Collectors.toList()),
-                pageable,
-                dibList.size());
+                .collect(Collectors.toList());
     }
 }
