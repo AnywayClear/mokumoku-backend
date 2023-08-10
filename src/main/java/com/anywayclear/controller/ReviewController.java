@@ -24,7 +24,6 @@ public class ReviewController {
             @PathVariable("auctionId") Long auctionId,
             @AuthenticationPrincipal OAuth2User oAuth2User){
         String reviewerId = (String) oAuth2User.getAttributes().get("userId");
-        ReviewResponse rr = reviewService.createReview(reviewerId, auctionId, request);
-        return ResponseEntity.ok(rr);
+        return ResponseEntity.ok(reviewService.createReview(reviewerId, auctionId, request));
     }
 }
