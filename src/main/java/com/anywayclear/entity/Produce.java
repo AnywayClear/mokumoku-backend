@@ -55,6 +55,7 @@ public class Produce {
 
     @OneToMany(mappedBy = "produce")
     private List<Dib> dibList = new ArrayList<>();
+
     @Builder
     public Produce(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status) {
         this.name = name;
