@@ -1,8 +1,11 @@
 package com.anywayclear.controller;
 
 import com.anywayclear.dto.request.DibCreateRequest;
+import com.anywayclear.dto.response.DibResponse;
 import com.anywayclear.dto.response.DibResponseList;
 import com.anywayclear.dto.response.IsDibResponse;
+import com.anywayclear.dto.response.MultiResponse;
+import com.anywayclear.entity.Dib;
 import com.anywayclear.service.DibService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,9 +33,9 @@ public class DibController {
         return ResponseEntity.created(URI.create("api/dibs/" + id)).build();
     }
 
-    @GetMapping
-    public ResponseEntity<DibResponseList> getDibList(@RequestParam(name = "userId") String userId, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(dibService.getDibList(userId, pageable));
+    @GetMapping("/{userId}")
+    public ResponseEntity<MultiResponse<DibResponse, Dib>> getDibList(@PathVariable("userId") String userId, Pageable pageable) {
+        return ResponseEntity.ok(dibService.getDibPage(userId, pageable));
     }
 
     @GetMapping("/{produce-id}/member")

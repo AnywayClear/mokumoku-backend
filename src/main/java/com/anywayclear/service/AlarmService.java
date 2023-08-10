@@ -2,7 +2,12 @@ package com.anywayclear.service;
 
 import com.anywayclear.dto.response.*;
 import com.anywayclear.entity.Alarm;
+import com.anywayclear.entity.Dib;
+import com.anywayclear.entity.Member;
+import com.anywayclear.repository.DibRepository;
+import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.SSEInMemoryRepository;
+import com.anywayclear.repository.SubscribeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,11 +19,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -42,8 +44,11 @@ public class AlarmService  {
     // 구독 목록 불러오기 위한 서비스
     private final SubscribeService subscribeService;
 
-    // 찜 목록 불러오기 위한 서비스
-    private final DibService dibService;
+    // 찜 목록 불러오기 위한 리포지토리
+    private final DibRepository dibRepository;
+
+    // 유저Id로 유저 객체를 찾기 위한 리포지토리
+    private final MemberRepository memberRepository;
 
     // topic 이름으로 topic 정보를 가져와 메시지를 발송할 수 있도록 Map에 저장
     private Map<String, ChannelTopic> channels;
@@ -63,23 +68,9 @@ public class AlarmService  {
     }
 
     public SseEmitter subscribeTopic(String topicName, String userId, String lastEventId, LocalDateTime now) {
-//        RedisPubSubAdapter<String, String> listener = new RedisPubSubAdapter<String, String>() {
-//            @Override
-//            public void message(String channel, String message) {
-//                System.out.println(String.format("subscribe -> Channel: %s, Message: %s", channel, message));
-//            }
-//        };
-//
-//        StatefulRedisPubSubConnection<String, String> pubsubConn = Main.redisClient.connectPubSub();
-//        pubsubConn.addListener(listener);
-//        RedisPubSubAsyncCommands<String, String> async = pubsubConn.async();
-//        async.subscribe(topicName);
-//
-//// application flow continues
-
         // Pub/Sub Topic 찾아서 리스너 연결
-        ChannelTopic topic = channels.get(topicName);
-        redisMessageListener.addMessageListener(redisSubscribeService, topic);
+//        ChannelTopic topic = channels.get(topicName);
+//        redisMessageListener.addMessageListener(redisSubscribeService, topic);
 
         // SSE 연결
         // emitter에 키에 토픽, 유저 정보를 담기
@@ -100,7 +91,7 @@ public class AlarmService  {
         sseRepository.put(key, emitter);
         try {
             emitter.send(SseEmitter.event()
-                    .name("CONNCECTED")
+                    .name("CONNCECTED") // 클라이언트에서 식별하는 이벤트 이름
                     .id(key)
                     .data("subscribe"));
         } catch (IOException exception) {
@@ -147,14 +138,15 @@ public class AlarmService  {
         return new AlarmResponseList(alarmList);
     }
   
-    public AlarmResponseList getDibAlarmList(String memberId, Pageable pageable) { // 해당 유저의 알림 리스트 불러오기
+    public AlarmResponseList getDibAlarmList(String memberId) { // 해당 유저의 알림 리스트 불러오기
         // 패턴 매칭 사용 -> member:memberId:alarm:*
 
         // [1] 유저의 찜 목록 불러오기
-        DibResponseList dibResponseList = dibService.getDibList(memberId, pageable);
+        Optional<Member> member = memberRepository.findByUserId(memberId);
+        List<Dib> dibList = dibRepository.findAllByConsumer(member);
         Set<String> keys = new HashSet<>(); // Set을 사용하여 중복된 값 제거
-        for (DibResponse response : dibResponseList.getDibResponseList()) {
-            String produce = response.getId().toString(); // Response 객체에서 sender 필드 값을 추출
+        for (Dib dib : dibList) {
+            String produce = dib.getProduce().getId().toString(); // Response 객체에서 sender 필드 값을 추출
             keys.add(produce); // keys 집합에 sender 값 추가
         }
 

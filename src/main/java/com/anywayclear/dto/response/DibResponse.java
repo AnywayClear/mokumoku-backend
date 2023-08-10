@@ -44,14 +44,14 @@ public class DibResponse {
         this.userId = userId;
     }
 
-    public static DibResponse toResponse(Produce produce) {
+    public static DibResponse toResponse(Dib dib) {
         return DibResponse.builder()
-                .id(produce.getId())
-                .title(produce.getName())
-                .startPrice(produce.getStartPrice())
-                .image(produce.getImage())
-                .sellerName(produce.getSeller().getNickname())
-                .userId(produce.getSeller().getUserId())
+                .id(dib.getProduce().getId())
+                .title(dib.getProduce().getName())
+                .startPrice(dib.getProduce().getStartPrice())
+                .image(dib.getProduce().getImage())
+                .sellerName(dib.getProduce().getSeller().getNickname())
+                .userId(dib.getProduce().getSeller().getUserId())
                 .build();
     }
 }
