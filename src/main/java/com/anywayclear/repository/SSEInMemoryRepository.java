@@ -10,20 +10,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Repository
-public class SSEInMemoryRepository implements SSERepository{
+public class SSEInMemoryRepository{
     private final Map<String, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
 
-    @Override
     public void put(String key, SseEmitter sseEmitter) {
         sseEmitterMap.put(key, sseEmitter);
     }
 
-    @Override
     public Optional<SseEmitter> get(String key) {
         return Optional.ofNullable(sseEmitterMap.get(key));
     }
 
-    @Override
     public List<SseEmitter> getListByKeyPrefix(String keyPrefix){
         return sseEmitterMap.keySet().stream()
                 .filter(key -> key.startsWith(keyPrefix))
@@ -31,16 +28,19 @@ public class SSEInMemoryRepository implements SSERepository{
                 .collect(Collectors.toList());
     }
 
-    @Override
     public List<String> getKeyListByKeyPrefix(String keyPrefix){
         return sseEmitterMap.keySet().stream()
                 .filter(key -> key.startsWith(keyPrefix))
                 .collect(Collectors.toList());
     }
 
-
-    @Override
     public void remove(String key) {
         sseEmitterMap.remove(key);
+    }
+
+    public void deleteAllByKeyPrefix(String keyPrefix) {
+        sseEmitterMap.forEach((key, emitter) -> {
+            if (key.startsWith(keyPrefix)) sseEmitterMap.remove(key);
+        });
     }
 }

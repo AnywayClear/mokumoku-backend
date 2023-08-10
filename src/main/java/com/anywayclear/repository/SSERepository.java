@@ -19,4 +19,6 @@ public interface SSERepository {
     List<String> getKeyListByKeyPrefix(String keyPrefix);
 
     void remove(String key);
+
+    void deleteAllByKeyPrefix(String keyPrefix);
 }
