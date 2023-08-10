@@ -33,10 +33,9 @@ public class AlarmController {
         return ResponseEntity.created(URI.create("api/alarms/" + topic)).build();
     }
 
-    @PostMapping(value = "/topic/{topicName}/subscribe", produces = "text/event-stream")
+    @GetMapping(value = "/topic/{topicName}/subscribe", produces = "text/event-stream")
     public ResponseEntity<SseEmitter> subscribeTopic(@PathVariable String topicName, @AuthenticationPrincipal OAuth2User oAuth2User,
                                                      @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
-//        alarmService.subscribeTopic(topicName);
         System.out.println("OAuth UserName : " + oAuth2User);
         return new ResponseEntity<>(alarmService.subscribeTopic(topicName, "username", lastEventId, LocalDateTime.now()), HttpStatus.OK);
     }
@@ -58,7 +57,7 @@ public class AlarmController {
         return ResponseEntity.ok(alarmService.getSubscribeAlarmList(memberId));
     }
     @GetMapping("/{memberId}/dibs")
-    public ResponseEntity<AlarmResponseList> getDibAlarmList(@PathVariable String memberId, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(alarmService.getDibAlarmList(memberId, pageable));
+    public ResponseEntity<AlarmResponseList> getDibAlarmList(@PathVariable String memberId) {
+        return ResponseEntity.ok(alarmService.getDibAlarmList(memberId));
     }
 }
