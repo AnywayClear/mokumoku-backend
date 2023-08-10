@@ -2,7 +2,6 @@ package com.anywayclear.dto.response;
 
 import com.anywayclear.entity.Deal;
 import com.anywayclear.entity.Member;
-import com.anywayclear.entity.Produce;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,10 +13,10 @@ public class DealResponse {
     private boolean isPaid;
     private Member consumer;
     private Member seller;
-    private Produce produce;
+    private ProduceResponse produce;
 
     @Builder
-    public DealResponse(int endPrice, boolean isPaid, Member consumer, Member seller, Produce produce) {
+    public DealResponse(int endPrice, boolean isPaid, Member consumer, Member seller, ProduceResponse produce) {
         this.endPrice = endPrice;
         this.isPaid = isPaid;
         this.consumer = consumer;
@@ -31,7 +30,7 @@ public class DealResponse {
                 .isPaid(deal.isPaid())
                 .consumer(deal.getConsumer())
                 .seller(deal.getSeller())
-                .produce(deal.getProduce())
+                .produce(ProduceResponse.toResponse(deal.getProduce()))
                 .build();
     }
 }
