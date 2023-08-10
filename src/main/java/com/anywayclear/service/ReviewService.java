@@ -36,7 +36,6 @@ public class ReviewService {
         review.setMember(reviewer);
         review.setAuction(auction);
 
-        reviewRepository.save(review);
         return ReviewResponse.toResponse(review);
     }
 }

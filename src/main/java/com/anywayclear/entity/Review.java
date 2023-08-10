@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @Entity
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +28,6 @@ public class Review {
     @Column(nullable = false)
     private int score;
 
-    @CreatedDate
-    private String createdDate;
-
     @OneToOne
     @JoinColumn(name = "auction_id", referencedColumnName = "id")
     private Auction auction;
@@ -40,10 +37,9 @@ public class Review {
     private Member member;
 
     @Builder
-    public Review(String comment, int score, String createdDate, Auction auction, Member member) {
+    public Review(String comment, int score, Auction auction, Member member) {
         this.comment = comment;
         this.score = score;
-        this.createdDate = createdDate;
         this.auction = auction;
         this.member = member;
     }
@@ -52,7 +48,6 @@ public class Review {
         return Review.builder()
                 .comment(request.getComment())
                 .score(request.getScore())
-                .createdDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .build();
     }
 }

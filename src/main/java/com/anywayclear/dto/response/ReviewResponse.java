@@ -17,34 +17,31 @@ public class ReviewResponse {
     private Long id;
     private String comment;
     private int score;
-    private String createdDate;
-    private Auction auction;
+    private LocalDateTime createdAt;
+    private AuctionResponse auction;
     private String memberUserId;
     private String memberNickname;
 
     @Builder
-    public ReviewResponse(Long id, String comment, int score, String createdDate, Auction auction, String memberUserId, String memberNickname) {
+    public ReviewResponse(Long id, String comment, int score, LocalDateTime createdAt,String createdDate, AuctionResponse auction, String memberUserId, String memberNickname) {
         this.id = id;
         this.comment = comment;
         this.score = score;
-        this.createdDate = createdDate;
+        this.createdAt = createdAt;
         this.auction = auction;
         this.memberUserId = memberUserId;
         this.memberNickname = memberNickname;
     }
 
     public static ReviewResponse toResponse(Review review) {
-        ReviewResponse rr = ReviewResponse.builder()
+        return ReviewResponse.builder()
                 .id(review.getId())
                 .comment(review.getComment())
                 .score(review.getScore())
-                .createdDate(review.getCreatedDate())
-                .auction(review.getAuction())
+                .createdAt(review.getCreatedAt())
+                .auction(AuctionResponse.toResponse(review.getAuction()))
                 .memberUserId(review.getMember().getUserId())
                 .memberNickname(review.getMember().getNickname())
                 .build();
-
-        System.out.println("rr = " + rr);
-        return rr;
     }
 }
