@@ -53,7 +53,7 @@ public class ProduceService {
         Page<Produce> producePage;
         if (filter.equals("all")) {
             producePage = produceRepository.findAllByStatusInAndNameContaining(statusNoList, pageable, name);
-        } else {
+        } else  {
             Member seller = memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
             producePage = produceRepository.findAllBySellerAndStatusInAndNameContaining(seller, pageable, statusNoList, name);
         }
