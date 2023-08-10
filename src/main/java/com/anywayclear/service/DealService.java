@@ -5,11 +5,14 @@ import com.anywayclear.dto.response.DealResponse;
 import com.anywayclear.dto.response.DealResponseList;
 import com.anywayclear.entity.Deal;
 import com.anywayclear.entity.Member;
+import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.DealRepository;
 import com.anywayclear.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.anywayclear.exception.ExceptionCode.INVALID_DEAL;
 
 @Service
 public class DealService {
@@ -24,16 +27,15 @@ public class DealService {
     public Long createDeal(DealCreateRequest request) {
         return dealRepository.save(Deal.toEntity(request)).getId();
     }
-
     public DealResponse getDeal(Long id) {
-        Deal deal = dealRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        Deal deal = dealRepository.findById(id).orElseThrow(() -> new CustomException(INVALID_DEAL));
         return DealResponse.toResponse(deal);
     }
 
     public DealResponseList getDealList(String userId) {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
         List<Deal> dealList;
-        if (member.getRole() == "ROLE_SELLER") { // 판매자 일 경우
+        if (member.getRole().equals("ROLE_SELLER")) { // 판매자 일 경우
             dealList = dealRepository.findAllBySeller(member);
         } else { // 소비자 일 경우
             dealList = dealRepository.findAllByConsumer(member);

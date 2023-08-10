@@ -20,6 +20,7 @@ public enum ExceptionCode {
     INVALID_PRICE(BAD_REQUEST, "현재 입찰가보다 낮게 입찰할 수 없습니다", 400),
     EXPIRED_AUCTION_TIME(BAD_REQUEST,"경매 시간이 종료되었습니다.",400),
     INVALID_AUCTION_STATUS(BAD_REQUEST, "경매 가능한 상태가 아닙니다", 400),
+    INVALID_DEAL(BAD_REQUEST, "잘못된 거래 목록 입니다.", 400),
 
     // 401 UNAUTHORIZED : 인증되지 않은 사용자
     INVALID_TOKEN(UNAUTHORIZED, "잘못된 토큰입니다", 401),

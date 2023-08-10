@@ -29,10 +29,11 @@ public class AuctionController {
     }
 
     @PatchMapping("/{auction-id}/status")
-    public ResponseEntity<Void> changeFinished(@PathVariable("auction-id") long auctionId) {
-        auctionService.changeFinished(auctionId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Long> changeFinished(@PathVariable("auction-id") long auctionId) {
+        Long dealId = auctionService.changeFinished(auctionId);
+        return ResponseEntity.ok(dealId);
     }
+
     /*
      * 테스트용
      */

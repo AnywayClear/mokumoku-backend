@@ -1,6 +1,7 @@
 package com.anywayclear.service;
 
 import com.anywayclear.dto.request.BiddingRequest;
+import com.anywayclear.dto.request.DealCreateRequest;
 import com.anywayclear.dto.response.AuctionResponseList;
 import com.anywayclear.dto.response.BiddingResponse;
 import com.anywayclear.entity.Auction;
@@ -23,11 +24,14 @@ public class AuctionService {
     private final MemberRepository memberRepository;
     private final ProduceRepository produceRepository;
 
+    private final DealService dealService;
+
     public AuctionService(AuctionRepository auctionRepository,
-                          MemberRepository memberRepository, ProduceRepository produceRepository) {
+                          MemberRepository memberRepository, ProduceRepository produceRepository, DealService dealService) {
         this.auctionRepository = auctionRepository;
         this.memberRepository = memberRepository;
         this.produceRepository = produceRepository;
+        this.dealService = dealService;
     }
 
     @Transactional
@@ -61,9 +65,16 @@ public class AuctionService {
     }
 
     @Transactional
-    public void changeFinished(long auctionId) {
+    public Long changeFinished(long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         auction.setStatus(2);
+        DealCreateRequest dealCreateRequest = DealCreateRequest.builder()
+                .endPrice(auction.getPrice())
+                .consumer(memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER)))
+                .seller(auction.getProduce().getSeller())
+                .produce(auction.getProduce())
+                .build();
+        return dealService.createDeal(dealCreateRequest);
     }
     /**
      * test용 - 자동 최소 비딩

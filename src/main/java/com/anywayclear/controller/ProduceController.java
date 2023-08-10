@@ -47,9 +47,11 @@ public class ProduceController {
     }
 
     @GetMapping
-    public ResponseEntity<MultiResponse<ProduceResponse, Produce>> getProduceList(@RequestParam List<Integer> statusNoList,
-                                                                                  Pageable pageable) {
-        return ResponseEntity.ok(produceService.getProducePage(statusNoList,pageable));
+    public ResponseEntity<MultiResponse<ProduceResponse, Produce>> getProduceList(
+            @AuthenticationPrincipal OAuth2User oAuth2User,@RequestParam(required = false, defaultValue = "all") String filter,@RequestParam List<Integer> statusNoList,
+            Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
+        String sellerId = (String) oAuth2User.getAttributes().get("userId");
+        return ResponseEntity.ok(produceService.getProducePage(statusNoList, pageable, name,sellerId,filter));
     }
 
     @GetMapping("/{id}/auctions")

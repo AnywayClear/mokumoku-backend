@@ -4,6 +4,7 @@ import com.anywayclear.dto.request.ProduceCreateRequest;
 import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.entity.Auction;
+import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.AuctionRepository;
@@ -48,9 +49,15 @@ public class ProduceService {
     }
 
     @Transactional(readOnly = true)
-    public MultiResponse<ProduceResponse,Produce> getProducePage(List<Integer> statusNoList, Pageable pageable) {
-        Page<Produce> producePage = produceRepository.findAllByStatusIn(statusNoList,pageable);
+    public MultiResponse<ProduceResponse, Produce> getProducePage(List<Integer> statusNoList, Pageable pageable, String name, String sellerId, String filter) {
+        Page<Produce> producePage;
+        if (filter.equals("all")) {
+            producePage = produceRepository.findAllByStatusInAndNameContaining(statusNoList, pageable, name);
+        } else {
+            Member seller = memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+            producePage = produceRepository.findAllBySellerAndStatusInAndNameContaining(seller, pageable, statusNoList, name);
+        }
         List<ProduceResponse> produceResponseList = producePage.map(ProduceResponse::toResponse).getContent();
-        return new MultiResponse<>(produceResponseList,producePage);
+        return new MultiResponse<>(produceResponseList, producePage);
     }
 }
