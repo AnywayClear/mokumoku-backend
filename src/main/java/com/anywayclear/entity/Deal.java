@@ -37,6 +37,10 @@ public class Deal {
     @JoinColumn(name = "produce_id", referencedColumnName = "id")
     private Produce produce;
 
+    @OneToOne
+    @JoinColumn(name = "review_id", referencedColumnName = "id")
+    private Review review;
+
     @Builder
     public Deal(int endPrice, Member consumer, Member seller, Produce produce) {
         this.endPrice = endPrice;

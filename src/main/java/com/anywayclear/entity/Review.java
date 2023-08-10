@@ -1,15 +1,12 @@
 package com.anywayclear.entity;
 
-import com.anywayclear.dto.request.ReviewCreateRequest;
+import com.anywayclear.dto.request.ReviewRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -29,22 +26,22 @@ public class Review extends BaseTime{
     private int score;
 
     @OneToOne
-    @JoinColumn(name = "auction_id", referencedColumnName = "id")
-    private Auction auction;
+    @JoinColumn(name = "deal_id", referencedColumnName = "id")
+    private Deal deal;
 
     @OneToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
     @Builder
-    public Review(String comment, int score, Auction auction, Member member) {
+    public Review(String comment, int score, Deal deal, Member member) {
         this.comment = comment;
         this.score = score;
-        this.auction = auction;
+        this.deal = deal;
         this.member = member;
     }
 
-    public static Review toEntity(ReviewCreateRequest request) {
+    public static Review toEntity(ReviewRequest request) {
         return Review.builder()
                 .comment(request.getComment())
                 .score(request.getScore())
