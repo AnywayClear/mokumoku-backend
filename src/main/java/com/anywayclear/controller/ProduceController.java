@@ -3,10 +3,12 @@ package com.anywayclear.controller;
 
 import com.anywayclear.dto.request.ProduceCreateRequest;
 import com.anywayclear.dto.response.AuctionResponseList;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.dto.response.ProduceResponse;
-import com.anywayclear.dto.response.ProduceResponseList;
+import com.anywayclear.entity.Produce;
 import com.anywayclear.service.AuctionService;
 import com.anywayclear.service.ProduceService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -45,8 +47,10 @@ public class ProduceController {
     }
 
     @GetMapping
-    public ResponseEntity<ProduceResponseList> getProduceList(@RequestParam List<Integer> statusNoList) {
-        return ResponseEntity.ok(produceService.getProduceList(statusNoList));
+    public ResponseEntity<MultiResponse<ProduceResponse, Produce>> getProduceList(
+            @RequestParam(value = "userId",required = false) String sellerId, @RequestParam(required = false, defaultValue = "all") String filter, @RequestParam List<Integer> statusNoList,
+            Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
+        return ResponseEntity.ok(produceService.getProducePage(statusNoList, pageable, name, sellerId, filter));
     }
 
     @GetMapping("/{id}/auctions")

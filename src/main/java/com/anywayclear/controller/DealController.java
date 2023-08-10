@@ -1,9 +1,14 @@
 package com.anywayclear.controller;
 
 import com.anywayclear.dto.request.DealCreateRequest;
-import com.anywayclear.dto.response.DealResponseList;
+import com.anywayclear.dto.response.DealResponse;
+import com.anywayclear.dto.response.MultiResponse;
+import com.anywayclear.entity.Deal;
 import com.anywayclear.service.DealService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +30,8 @@ public class DealController {
     }
 
     @GetMapping
-    public ResponseEntity<DealResponseList> getDealList(@RequestParam(name = "userId") String userId) {
-        return ResponseEntity.ok(dealService.getDealList(userId));
+    public ResponseEntity<MultiResponse<DealResponse, Deal>> getDealList(@AuthenticationPrincipal OAuth2User oAuth2User, Pageable pageable) {
+        String userId = (String) oAuth2User.getAttributes().get("userId");
+        return ResponseEntity.ok(dealService.getDealList(userId, pageable));
     }
 }

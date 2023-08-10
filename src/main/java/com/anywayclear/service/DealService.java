@@ -2,14 +2,21 @@ package com.anywayclear.service;
 
 import com.anywayclear.dto.request.DealCreateRequest;
 import com.anywayclear.dto.response.DealResponse;
-import com.anywayclear.dto.response.DealResponseList;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.entity.Deal;
 import com.anywayclear.entity.Member;
+import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.DealRepository;
 import com.anywayclear.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.anywayclear.exception.ExceptionCode.INVALID_DEAL;
+import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 
 @Service
 public class DealService {
@@ -26,18 +33,20 @@ public class DealService {
     }
 
     public DealResponse getDeal(Long id) {
-        Deal deal = dealRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        Deal deal = dealRepository.findById(id).orElseThrow(() -> new CustomException(INVALID_DEAL));
         return DealResponse.toResponse(deal);
     }
 
-    public DealResponseList getDealList(String userId) {
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
-        List<Deal> dealList;
-        if (member.getRole() == "ROLE_SELLER") { // 판매자 일 경우
-            dealList = dealRepository.findAllBySeller(member);
+    @Transactional(readOnly = true)
+    public MultiResponse<DealResponse, Deal> getDealList(String userId, Pageable pageable) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        Page<Deal> dealPage;
+        if (member.getRole().equals("ROLE_SELLER")) { // 판매자 일 경우
+            dealPage = dealRepository.findAllBySeller(member, pageable);
         } else { // 소비자 일 경우
-            dealList = dealRepository.findAllByConsumer(member);
+            dealPage = dealRepository.findAllByConsumer(member, pageable);
         }
-        return new DealResponseList(dealList);
+        List<DealResponse> dealResponseList = dealPage.map(DealResponse::toResponse).getContent();
+        return new MultiResponse<>(dealResponseList, dealPage);
     }
 }

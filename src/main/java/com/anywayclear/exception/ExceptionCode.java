@@ -32,6 +32,8 @@ public enum ExceptionCode {
 
     // 404 Not Found : 요청한 URI에 대한 리소스 없음
     INVALID_RESOURCE(NOT_FOUND, "요청한 리소스가 없습니다", 404),
+    INVALID_REVIEW(NOT_FOUND, "존재하지 않는 리뷰입니다", 404),
+    INVALID_DEAL(NOT_FOUND, "존재하지 않는 거래입니다", 404),
 
     // 405 Method Not Allowed : 사용 불가능한 Method 이용
     INVALID_METHOD(METHOD_NOT_ALLOWED, "지원하지 않는 Method 입니다.", 405),

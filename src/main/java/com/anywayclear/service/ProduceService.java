@@ -1,12 +1,17 @@
 package com.anywayclear.service;
 
 import com.anywayclear.dto.request.ProduceCreateRequest;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.dto.response.ProduceResponse;
-import com.anywayclear.dto.response.ProduceResponseList;
 import com.anywayclear.entity.Auction;
+import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
 import com.anywayclear.exception.CustomException;
-import com.anywayclear.repository.*;
+import com.anywayclear.repository.AuctionRepository;
+import com.anywayclear.repository.MemberRepository;
+import com.anywayclear.repository.ProduceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +32,7 @@ public class ProduceService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public Long createProduce(ProduceCreateRequest request, String sellerId) {
         Produce produce = produceRepository.save(Produce.toEntity(request));
         produce.setSeller(memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER)));
@@ -43,8 +49,15 @@ public class ProduceService {
     }
 
     @Transactional(readOnly = true)
-    public ProduceResponseList getProduceList(List<Integer> statusNoList) {
-        List<Produce> produceList = produceRepository.findByStatusIn(statusNoList);
-        return new ProduceResponseList(produceList);
+    public MultiResponse<ProduceResponse, Produce> getProducePage(List<Integer> statusNoList, Pageable pageable, String name, String sellerId, String filter) {
+        Page<Produce> producePage;
+        if (filter.equals("all")) {
+            producePage = produceRepository.findAllByStatusInAndNameContaining(statusNoList, pageable, name);
+        } else  {
+            Member seller = memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+            producePage = produceRepository.findAllBySellerAndStatusInAndNameContaining(seller, pageable, statusNoList, name);
+        }
+        List<ProduceResponse> produceResponseList = producePage.map(ProduceResponse::toResponse).getContent();
+        return new MultiResponse<>(produceResponseList, producePage);
     }
 }

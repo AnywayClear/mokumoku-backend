@@ -4,6 +4,9 @@ import com.anywayclear.dto.request.DibCreateRequest;
 import com.anywayclear.dto.response.DibResponseList;
 import com.anywayclear.dto.response.IsDibResponse;
 import com.anywayclear.service.DibService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -28,8 +31,8 @@ public class DibController {
     }
 
     @GetMapping
-    public ResponseEntity<DibResponseList> getDibList(@RequestParam(name = "userId") String userId) {
-        return ResponseEntity.ok(dibService.getDibList(userId));
+    public ResponseEntity<DibResponseList> getDibList(@RequestParam(name = "userId") String userId, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(dibService.getDibList(userId, pageable));
     }
 
     @GetMapping("/{produce-id}/member")
