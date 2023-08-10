@@ -27,6 +27,7 @@ public class ProduceService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public Long createProduce(ProduceCreateRequest request, String sellerId) {
         Produce produce = produceRepository.save(Produce.toEntity(request));
         produce.setSeller(memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER)));

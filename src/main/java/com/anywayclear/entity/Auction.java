@@ -21,7 +21,7 @@ public class Auction extends BaseTime{
     private Produce produce;
 
     @OneToOne
-    @JoinColumn(name = "review__id", referencedColumnName = "id")
+    @JoinColumn(name = "review_id", referencedColumnName = "id")
     private Review review;
 
     private int price;
