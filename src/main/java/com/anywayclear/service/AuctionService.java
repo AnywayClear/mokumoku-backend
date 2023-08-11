@@ -14,8 +14,8 @@ import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
 import static com.anywayclear.exception.ExceptionCode.*;
 
 @Service
@@ -40,9 +40,10 @@ public class AuctionService {
         if (auction.getStatus() == 0 || auction.getStatus() == 2) {
             throw new CustomException(INVALID_AUCTION_STATUS);
         }
-        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
-            throw new CustomException(EXPIRED_AUCTION_TIME);
-        }
+        /* 테스트동안 제한 안함 */
+//        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
+//            throw new CustomException(EXPIRED_AUCTION_TIME);
+//        }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         if (request.getPrice() < auction.getPrice() + 100) { // 가격 기준 정해지면 수정할 로직
             throw new CustomException(INVALID_PRICE);

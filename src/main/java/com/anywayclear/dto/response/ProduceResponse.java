@@ -21,6 +21,7 @@ public class ProduceResponse {
     private final int startPrice;
     private final int kg;
     private final int ea;
+    private final String sellerImage;
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
     private final int status;
@@ -28,7 +29,7 @@ public class ProduceResponse {
     private final int dibNum;
 
     @Builder
-    public ProduceResponse(long id, String name, Member member, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status, AuctionResponseList auctionResponseList, List<Dib> dibList) {
+    public ProduceResponse(long id, String name, Member member, String description, String image, int startPrice, int kg, int ea, String sellerImage, LocalDateTime startDate, LocalDateTime endDate, int status, AuctionResponseList auctionResponseList, List<Dib> dibList) {
         this.id = id;
         this.name = name;
         this.seller = member.getNickname();
@@ -39,6 +40,7 @@ public class ProduceResponse {
         this.startPrice = startPrice;
         this.kg = kg;
         this.ea = ea;
+        this.sellerImage = sellerImage;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
@@ -51,6 +53,7 @@ public class ProduceResponse {
                 .id(produce.getId())
                 .name(produce.getName())
                 .member(produce.getSeller())
+                .sellerImage(produce.getSeller().getImage())
 //                .member(new Member())
                 .description(produce.getDescription())
                 .image(produce.getImage())
