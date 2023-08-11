@@ -25,9 +25,11 @@ public class AuctionController {
             @PathVariable("auction-id") long auctionId,
             @RequestBody BiddingRequest request) {   // 인증정보 받기 추가 예정
         String consumerId = (String) oAuth2User.getAttributes().get("userId");
+        auctionService.checkAuctionFinished(auctionId);
         return ResponseEntity.ok(auctionService.Bidding(auctionId, consumerId, request));
     }
 
+    /*폐기*/
     @PatchMapping("/{auction-id}/status")
     public ResponseEntity<Long> changeFinished(@PathVariable("auction-id") long auctionId) {
         Long dealId = auctionService.changeFinished(auctionId);

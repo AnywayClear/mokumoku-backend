@@ -1,4 +1,4 @@
-package com.anywayclear.entity;
+package com.anywayclear.util;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
