@@ -1,8 +1,11 @@
 package com.anywayclear.controller;
 
 import com.anywayclear.dto.request.ReviewRequest;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.dto.response.ReviewResponse;
+import com.anywayclear.entity.Review;
 import com.anywayclear.service.ReviewService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -20,17 +23,17 @@ public class ReviewController {
     @GetMapping("/{dealId}")
     public ResponseEntity<ReviewResponse> getReview(
             @PathVariable("dealId") Long dealId) {
-        reviewService.getReview(dealId);
         return ResponseEntity.ok(reviewService.getReview(dealId));
     }
 
-    @PostMapping("/{dealId}")
-    public ResponseEntity<Long> createReview(
-            @RequestBody ReviewRequest request,
-            @PathVariable("dealId") Long dealId,
-            @AuthenticationPrincipal OAuth2User oAuth2User){
-        String reviewerId = (String) oAuth2User.getAttributes().get("userId");
-        return ResponseEntity.ok(reviewService.createReview(reviewerId, dealId, request));
+    @GetMapping("/lists/{userId}")
+    public ResponseEntity<MultiResponse<ReviewResponse, Review>> getReviewList(
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "sort", required = false) String sortedBy,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(reviewService.getReviewList(userId, pageable, q, sortedBy));
     }
 
     @PatchMapping("/{reviewId}")
