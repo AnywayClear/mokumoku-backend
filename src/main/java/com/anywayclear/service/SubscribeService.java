@@ -1,6 +1,5 @@
 package com.anywayclear.service;
 
-import com.anywayclear.dto.request.SubscribeCreateRequest;
 import com.anywayclear.dto.response.IsSubResponse;
 import com.anywayclear.dto.response.SubscribeResponse;
 import com.anywayclear.dto.response.SubscribeResponseList;
@@ -8,12 +7,15 @@ import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Subscribe;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.MemberRepository;
+import com.anywayclear.repository.SSEInMemoryRepository;
 import com.anywayclear.repository.SubscribeRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 
@@ -22,16 +24,25 @@ public class SubscribeService {
     private final SubscribeRepository subscribeRepository;
     private final MemberRepository memberRepository;
 
-    public SubscribeService(SubscribeRepository subscribeRepository, MemberRepository memberRepository) {
+
+    private AlarmService alarmService;
+
+    public SubscribeService(SubscribeRepository subscribeRepository, MemberRepository memberRepository, AlarmService alarmService) {
         this.subscribeRepository = subscribeRepository;
         this.memberRepository = memberRepository;
+        this.alarmService = alarmService;
     }
 
-    public Long createSubscribe(SubscribeCreateRequest request) {
-        Member consumer = memberRepository.findByUserId(request.getConsumerId()).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
-        Member seller = memberRepository.findByUserId(request.getSellerId()).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+    public SseEmitter createSubscribe(String topicName, OAuth2User oAuth2User, String lastEventId, LocalDateTime now) {
+        String userId = (String) oAuth2User.getAttributes().get("userId");
+
+        Member consumer = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+        Member seller = memberRepository.findByUserId(topicName).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
         Subscribe subscribe = new Subscribe(consumer, seller);
-        return subscribeRepository.save(subscribe).getId();
+        subscribeRepository.save(subscribe);
+
+        return alarmService.createEmitter(topicName, userId, lastEventId, now);
+//        return subscribeRepository.save(subscribe).getId();
     }
 
     public SubscribeResponse getSubscribe(Long id) {

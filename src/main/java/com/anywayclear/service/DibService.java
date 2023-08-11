@@ -1,8 +1,6 @@
 package com.anywayclear.service;
 
-import com.anywayclear.dto.request.DibCreateRequest;
 import com.anywayclear.dto.response.DibResponse;
-import com.anywayclear.dto.response.DibResponseList;
 import com.anywayclear.dto.response.IsDibResponse;
 import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.entity.Dib;
@@ -14,12 +12,12 @@ import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 import static com.anywayclear.exception.ExceptionCode.INVALID_PRODUCE_ID;
@@ -31,17 +29,25 @@ public class DibService {
     private final MemberRepository memberRepository;
     private final ProduceRepository produceRepository;
 
-    public DibService(DibRepository dibRepository, MemberRepository memberRepository, ProduceRepository produceRepository) {
+    private final AlarmService alarmService;
+
+    public DibService(DibRepository dibRepository, MemberRepository memberRepository, ProduceRepository produceRepository, AlarmService alarmService) {
         this.dibRepository = dibRepository;
         this.memberRepository = memberRepository;
         this.produceRepository = produceRepository;
+        this.alarmService = alarmService;
     }
 
-    public Long createDib(DibCreateRequest request) {
-        Member member = memberRepository.findByUserId(request.getConsumerId()).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
-        Produce produce = produceRepository.findById(request.getProduceId()).orElseThrow(() -> new RuntimeException("해당 농산물이 없습니다."));
+    public SseEmitter createDib(Long topicName, OAuth2User oAuth2User, String lastEventId, LocalDateTime now) {
+        String userId = (String) oAuth2User.getAttributes().get("userId");
+
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+        Produce produce = produceRepository.findById(topicName).orElseThrow(() -> new RuntimeException("해당 농산물이 없습니다."));
         Dib dib = new Dib(member, produce);
-        return dibRepository.save(dib).getId();
+        dibRepository.save(dib);
+
+        return alarmService.createEmitter(topicName.toString(), userId, lastEventId, now);
+//        return dibRepository.save(dib).getId();
     }
 
     public DibResponse getDib(Long id) {

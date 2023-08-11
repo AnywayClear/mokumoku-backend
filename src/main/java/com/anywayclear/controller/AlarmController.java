@@ -27,30 +27,30 @@ public class AlarmController {
     // 알림 서비스
     private final AlarmService alarmService;
 
-    @PutMapping("/topic/{topicName}")
-    public ResponseEntity<Void> createTopic(@PathVariable String topicName) {
-        final String topic = alarmService.createTopic(topicName);
-        return ResponseEntity.created(URI.create("api/alarms/" + topic)).build();
-    }
+//    @PutMapping("/topic/{topicName}")
+//    public ResponseEntity<Void> createTopic(@PathVariable String topicName) {
+//        final String topic = alarmService.createTopic(topicName);
+//        return ResponseEntity.created(URI.create("api/alarms/" + topic)).build();
+//    }
 
-    @GetMapping(value = "/topic/{topicName}/subscribe", produces = "text/event-stream")
-    public ResponseEntity<SseEmitter> subscribeTopic(@PathVariable String topicName, @AuthenticationPrincipal OAuth2User oAuth2User,
-                                                     @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
-        System.out.println("OAuth UserName : " + oAuth2User);
-        return new ResponseEntity<>(alarmService.subscribeTopic(topicName, "username", lastEventId, LocalDateTime.now()), HttpStatus.OK);
-    }
+//    @GetMapping(value = "/topic/{topicName}/subscribe", produces = "text/event-stream")
+//    public ResponseEntity<SseEmitter> subscribeTopic(@PathVariable String topicName, @AuthenticationPrincipal OAuth2User oAuth2User,
+//                                                     @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
+//        System.out.println("OAuth UserName : " + oAuth2User);
+//        return new ResponseEntity<>(alarmService.subscribeTopic(topicName, "username", lastEventId, LocalDateTime.now()), HttpStatus.OK);
+//    }
 
     @PostMapping("/topic/{topicName}")
     @ResponseStatus(HttpStatus.CREATED)
     public void pushAlarm(@PathVariable String topicName, @RequestParam(name = "sender") String sender, @RequestParam(name = "context") String context) {
-        alarmService.pushAlarm(topicName, sender, context);
+        alarmService.pushAlarm(topicName, context);
     }
 
-    @DeleteMapping("/topic/{topicName}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteTopic(@PathVariable String topicName) {
-        alarmService.deleteTopic(topicName);
-    }
+//    @DeleteMapping("/topic/{topicName}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public void deleteTopic(@PathVariable String topicName) {
+//        alarmService.deleteTopic(topicName);
+//    }
 
     @GetMapping("/{memberId}/subs")
     public ResponseEntity<AlarmResponseList> getSubscribeAlarmList(@PathVariable String memberId) {
