@@ -30,7 +30,7 @@ public class ReviewController {
     public ResponseEntity<MultiResponse<ReviewResponse, Review>> getReviewList(
             @PathVariable("userId") String userId,
             @RequestParam(value = "q", required = false) String q,
-            @RequestParam(value = "sort", required = false) String sortedBy,
+            @RequestParam(value = "sorted", required = false) String sortedBy,
             Pageable pageable
     ) {
         return ResponseEntity.ok(reviewService.getReviewList(userId, pageable, q, sortedBy));
