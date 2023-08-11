@@ -33,5 +33,6 @@ public class Auction extends BaseTime {
         this.price = produce.getStartPrice();
         this.nickname = "";
         this.lastBidding = produce.getStartDate();
+        this.isClosed = false;
     }
 }
