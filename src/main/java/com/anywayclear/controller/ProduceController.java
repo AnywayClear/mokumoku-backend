@@ -43,13 +43,15 @@ public class ProduceController {
     @GetMapping("/{id}")
 //    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
     public ResponseEntity<ProduceResponse> getProduce(@Positive @PathVariable("id") long id) {
+        produceService.updateProduceStatus();
         return ResponseEntity.ok(produceService.getProduce(id));
     }
 
     @GetMapping
     public ResponseEntity<MultiResponse<ProduceResponse, Produce>> getProduceList(
-            @RequestParam(value = "userId",required = false) String sellerId, @RequestParam(required = false, defaultValue = "all") String filter, @RequestParam List<Integer> statusNoList,
+            @RequestParam(value = "userId", required = false) String sellerId, @RequestParam(required = false, defaultValue = "all") String filter, @RequestParam List<Integer> statusNoList,
             Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
+        produceService.updateProduceStatus();
         return ResponseEntity.ok(produceService.getProducePage(statusNoList, pageable, name, sellerId, filter));
     }
 

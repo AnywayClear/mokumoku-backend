@@ -11,5 +11,7 @@ import java.util.List;
 public interface ProduceRepository extends JpaRepository<Produce, Long> {
     Page<Produce> findAllByStatusInAndNameContaining(List<Integer> statusNoList, Pageable pageable, String name);
 
-    Page<Produce> findAllBySellerAndStatusInAndNameContaining(Member seller,Pageable pageable,List<Integer> statusNoList,String name);
+    Page<Produce> findAllBySellerAndStatusInAndNameContaining(Member seller, Pageable pageable, List<Integer> statusNoList, String name);
+
+    List<Produce> findByStatus(int status);
 }

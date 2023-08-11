@@ -1,6 +1,7 @@
 package com.anywayclear.entity;
 
 import com.anywayclear.dto.request.ReviewRequest;
+import com.anywayclear.util.BaseTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
-public class Review extends BaseTime{
+public class Review extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

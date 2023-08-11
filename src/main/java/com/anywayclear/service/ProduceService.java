@@ -25,11 +25,13 @@ public class ProduceService {
     private final ProduceRepository produceRepository;
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
+    private final AuctionService auctionService;
 
-    public ProduceService(ProduceRepository produceRepository, AuctionRepository auctionRepository, MemberRepository memberRepository) {
+    public ProduceService(ProduceRepository produceRepository, AuctionRepository auctionRepository, MemberRepository memberRepository, AuctionService auctionService) {
         this.produceRepository = produceRepository;
         this.auctionRepository = auctionRepository;
         this.memberRepository = memberRepository;
+        this.auctionService = auctionService;
     }
 
     @Transactional
@@ -53,11 +55,20 @@ public class ProduceService {
         Page<Produce> producePage;
         if (filter.equals("all")) {
             producePage = produceRepository.findAllByStatusInAndNameContaining(statusNoList, pageable, name);
-        } else  {
+        } else {
             Member seller = memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
             producePage = produceRepository.findAllBySellerAndStatusInAndNameContaining(seller, pageable, statusNoList, name);
         }
         List<ProduceResponse> produceResponseList = producePage.map(ProduceResponse::toResponse).getContent();
         return new MultiResponse<>(produceResponseList, producePage);
+    }
+
+    @Transactional
+    public void updateProduceStatus() {
+        for (Produce produce : produceRepository.findByStatus(1)) {
+            for (Auction auction : produce.getAuctionList()) {
+                auctionService.checkAuctionFinished(auction.getId());
+            }
+        }
     }
 }

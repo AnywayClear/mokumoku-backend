@@ -1,17 +1,19 @@
 package com.anywayclear.entity;
 
+import com.anywayclear.util.BaseTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Auction extends BaseTime{
+public class Auction extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,11 +25,13 @@ public class Auction extends BaseTime{
     private int price;
 
     private String nickname;
+    private LocalDateTime lastBidding;
 
-    private int status; // 0: 대기, 1: 경매중, 2: 경매 완료
+    private boolean isClosed;
     public Auction(Produce produce) {
         this.produce = produce;
         this.price = produce.getStartPrice();
         this.nickname = "";
+        this.lastBidding = produce.getStartDate();
     }
 }

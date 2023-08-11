@@ -14,6 +14,7 @@ import com.anywayclear.repository.ProduceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.anywayclear.exception.ExceptionCode.*;
@@ -37,11 +38,11 @@ public class AuctionService {
     @Transactional
     public BiddingResponse Bidding(long auctionId, String consumerId, BiddingRequest request) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
-        if (auction.getStatus() == 0 || auction.getStatus() == 2) {
+        if (auction.getProduce().getStatus() == 0 || auction.isClosed()) {
             throw new CustomException(INVALID_AUCTION_STATUS);
         }
         /* 테스트동안 제한 안함 */
-//        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
+//        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(5))) {
 //            throw new CustomException(EXPIRED_AUCTION_TIME);
 //        }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
@@ -58,6 +59,20 @@ public class AuctionService {
                 .build();
     }
 
+    @Transactional
+    public void checkAuctionFinished(long auctionId) {
+        Auction auction=auctionRepository.findById(auctionId).orElseThrow(()->new CustomException(INVALID_AUCTION_ID));
+        Produce produce = auction.getProduce();
+        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(5))) {
+            auction.setClosed(true);
+            produce.setEa(produce.getEa() - 1);
+            // 한 상품의 모든 경매가 종료되었을 경우
+            if (produce.getEa() == 0) {
+                produce.setStatus(2);
+            }
+        }
+    }
+
     @Transactional(readOnly = true)
     public AuctionResponseList getAuctionList(long produceId) {
         Produce produce = produceRepository.findById(produceId).orElseThrow(() -> new CustomException(INVALID_PRODUCE_ID));
@@ -65,10 +80,11 @@ public class AuctionService {
         return new AuctionResponseList(auctionList);
     }
 
+    /* 요청으로 불가해서 폐기 */
     @Transactional
     public Long changeFinished(long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
-        auction.setStatus(2);
+        auction.setClosed(true);
         DealCreateRequest dealCreateRequest = DealCreateRequest.builder()
                 .endPrice(auction.getPrice())
                 .consumer(memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER)))
@@ -77,6 +93,7 @@ public class AuctionService {
                 .build();
         return dealService.createDeal(dealCreateRequest);
     }
+
     /**
      * test용 - 자동 최소 비딩
      */
