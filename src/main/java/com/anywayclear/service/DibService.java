@@ -4,6 +4,7 @@ import com.anywayclear.dto.request.DibCreateRequest;
 import com.anywayclear.dto.response.DibResponse;
 import com.anywayclear.dto.response.DibResponseList;
 import com.anywayclear.dto.response.IsDibResponse;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.entity.Dib;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
@@ -45,16 +46,14 @@ public class DibService {
 
     public DibResponse getDib(Long id) {
         Dib dib = dibRepository.findById(id).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
-        return DibResponse.toResponse(dib.getProduce());
+        return DibResponse.toResponse(dib);
     }
 
-    public DibResponseList getDibList(String userId, Pageable pageable) { // 찜 중인 농산물 리스트 반환
+    public MultiResponse<DibResponse, Dib> getDibPage(String userId, Pageable pageable) { // 찜 중인 농산물 리스트 반환
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
-        List<Produce> dibList = dibRepository.findAllByConsumer(member)
-                .stream()
-                .map(Dib::getProduce)
-                .collect(Collectors.toList());
-        return new DibResponseList(dibList, pageable);
+        Page<Dib> dibPage = dibRepository.findAllByConsumer(member, pageable);
+        List<DibResponse> dibResponseList = dibPage.map(DibResponse::toResponse).getContent();
+        return new MultiResponse<>(dibResponseList, dibPage);
     }
 
     public IsDibResponse getIsDib(String userId, long produceId) {

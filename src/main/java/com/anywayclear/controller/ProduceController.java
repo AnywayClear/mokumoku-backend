@@ -52,6 +52,7 @@ public class ProduceController {
             @RequestParam(value = "userId", required = false) String sellerId, @RequestParam(required = false, defaultValue = "all") String filter, @RequestParam List<Integer> statusNoList,
             Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
         produceService.updateProduceStatus();
+
         return ResponseEntity.ok(produceService.getProducePage(statusNoList, pageable, name, sellerId, filter));
     }
 
