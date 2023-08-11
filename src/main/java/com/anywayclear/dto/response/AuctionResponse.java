@@ -12,10 +12,10 @@ public class AuctionResponse {
     private final int price;
     private final String nickname;
     private final LocalDateTime updatedAt;
-    private final int status;
+    private final boolean status;
 
     @Builder
-    public AuctionResponse(Long id, int price, String nickname, LocalDateTime updatedAt, int status) {
+    public AuctionResponse(Long id, int price, String nickname, LocalDateTime updatedAt, boolean status) {
         this.id = id;
         this.price = price;
         this.nickname = nickname;
@@ -29,7 +29,7 @@ public class AuctionResponse {
                 .price(auction.getPrice())
                 .nickname(auction.getNickname())
                 .updatedAt(auction.getUpdatedAt())
-                .status(auction.getStatus())
+                .status(auction.isClosed())
                 .build();
     }
 }
