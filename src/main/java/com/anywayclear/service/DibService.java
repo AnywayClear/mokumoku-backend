@@ -19,8 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
-import static com.anywayclear.exception.ExceptionCode.INVALID_PRODUCE_ID;
+import static com.anywayclear.exception.ExceptionCode.*;
 
 @Service
 public class DibService {
@@ -41,8 +40,8 @@ public class DibService {
     public SseEmitter createDib(Long topicName, OAuth2User oAuth2User, String lastEventId, LocalDateTime now) {
         String userId = (String) oAuth2User.getAttributes().get("userId");
 
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
-        Produce produce = produceRepository.findById(topicName).orElseThrow(() -> new RuntimeException("해당 농산물이 없습니다."));
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        Produce produce = produceRepository.findById(topicName).orElseThrow(() -> new CustomException(INVALID_PRODUCE_ID));
         Dib dib = new Dib(member, produce);
         dibRepository.save(dib);
 
@@ -51,12 +50,12 @@ public class DibService {
     }
 
     public DibResponse getDib(Long id) {
-        Dib dib = dibRepository.findById(id).orElseThrow(() -> new RuntimeException("아이디가 없습니다."));
+        Dib dib = dibRepository.findById(id).orElseThrow(() -> new CustomException(INVALID_DIB_ID));
         return DibResponse.toResponse(dib);
     }
 
     public MultiResponse<DibResponse, Dib> getDibPage(String userId, Pageable pageable) { // 찜 중인 농산물 리스트 반환
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("해당 userId의 유저가 없습니다."));
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Page<Dib> dibPage = dibRepository.findAllByConsumer(member, pageable);
         List<DibResponse> dibResponseList = dibPage.map(DibResponse::toResponse).getContent();
         return new MultiResponse<>(dibResponseList, dibPage);
