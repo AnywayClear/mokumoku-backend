@@ -17,9 +17,12 @@ public enum ExceptionCode {
     INVALID_PRODUCE(BAD_REQUEST, "잘못된 농산물 정보 입니다", 400),
     INVALID_PRODUCE_ID(BAD_REQUEST, "잘못된 농산물 ID 입니다", 400),
     INVALID_AUCTION_ID(BAD_REQUEST, "잘못된 경매 ID 입니다", 400),
+    INVALID_DIB_ID(BAD_REQUEST, "잘못된 찜 ID 입니다", 400),
+    INVALID_SUBSCRIBE_ID(BAD_REQUEST, "잘못된 구독 ID 입니다", 400),
     INVALID_PRICE(BAD_REQUEST, "현재 입찰가보다 낮게 입찰할 수 없습니다", 400),
     EXPIRED_AUCTION_TIME(BAD_REQUEST,"경매 시간이 종료되었습니다.",400),
     INVALID_AUCTION_STATUS(BAD_REQUEST, "경매 가능한 상태가 아닙니다", 400),
+    INVALID_INSERT_REQUEST(BAD_REQUEST, "중복된 Insert 요청입니다.", 400),
 
     // 401 UNAUTHORIZED : 인증되지 않은 사용자
     INVALID_TOKEN(UNAUTHORIZED, "잘못된 토큰입니다", 401),

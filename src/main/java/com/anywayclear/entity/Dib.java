@@ -12,6 +12,18 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(
+        name = "dib",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "UniqueConsumerAndProduce",
+                        columnNames = {
+                                "consumer_id",
+                                "produce_id"
+                        }
+                )
+        }
+)
 public class Dib {
 
     @Id

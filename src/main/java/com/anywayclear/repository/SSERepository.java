@@ -14,7 +14,7 @@ public interface SSERepository {
 
     Optional<SseEmitter> get(String key);
 
-    List<SseEmitter> getListByKeyPrefix(String keyPrefix);
+    Map<String, SseEmitter> getListByKeyPrefix(String keyPrefix);
 
     List<String> getKeyListByKeyPrefix(String keyPrefix);
 

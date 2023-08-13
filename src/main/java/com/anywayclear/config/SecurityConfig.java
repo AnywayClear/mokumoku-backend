@@ -61,6 +61,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS 메서드는 모두 허용
 //                        .antMatchers("/api/members/**").authenticated() // jwt없이 요청한건지 재확인 가능
+                        .antMatchers("/api/subscribes/**").authenticated() // jwt없이 요청한건지 재확인 가능
+                        .antMatchers("/api/dibs/**").authenticated() // jwt없이 요청한건지 재확인 가능
                                 .anyRequest().permitAll()
                 );
 
