@@ -12,6 +12,18 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(
+        name = "subscribe",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "UniqueConsumerAndSeller",
+                        columnNames = {
+                                "consumer_id",
+                                "seller_id"
+                        }
+                )
+        }
+)
 public class Subscribe {
 
     @Id
