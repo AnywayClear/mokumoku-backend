@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class DibService {
         this.alarmService = alarmService;
     }
 
+    @Transactional
     public SseEmitter createDib(Long topicName, OAuth2User oAuth2User, String lastEventId, LocalDateTime now) {
         String userId = (String) oAuth2User.getAttributes().get("userId");
 
@@ -46,14 +48,15 @@ public class DibService {
         dibRepository.save(dib);
 
         return alarmService.createEmitter(topicName.toString(), userId, lastEventId, now);
-//        return dibRepository.save(dib).getId();
     }
 
+    @Transactional(readOnly = true)
     public DibResponse getDib(Long id) {
         Dib dib = dibRepository.findById(id).orElseThrow(() -> new CustomException(INVALID_DIB_ID));
         return DibResponse.toResponse(dib);
     }
 
+    @Transactional(readOnly = true)
     public MultiResponse<DibResponse, Dib> getDibPage(String userId, Pageable pageable) { // 찜 중인 농산물 리스트 반환
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Page<Dib> dibPage = dibRepository.findAllByConsumer(member, pageable);
@@ -61,10 +64,18 @@ public class DibService {
         return new MultiResponse<>(dibResponseList, dibPage);
     }
 
+    @Transactional(readOnly = true)
     public IsDibResponse getIsDib(String userId, long produceId) {
         Produce produce = produceRepository.findById(produceId).orElseThrow(() -> new CustomException(INVALID_PRODUCE_ID));
         Member consumer = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         boolean isDib = dibRepository.findByConsumerAndProduce(consumer, produce).isPresent();
         return new IsDibResponse(isDib);
+    }
+
+    @Transactional
+    public void deleteDib(Long produceId, String consumerId) {
+        Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        Produce produce = produceRepository.findById(produceId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+        dibRepository.deleteByConsumerAndProduce(consumer, produce);
     }
 }
