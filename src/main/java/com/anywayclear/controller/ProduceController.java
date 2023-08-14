@@ -8,6 +8,7 @@ import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.entity.Produce;
 import com.anywayclear.service.AuctionService;
 import com.anywayclear.service.ProduceService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/produces")
+@Slf4j
 //@Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
 public class ProduceController {
     private final ProduceService produceService;
@@ -51,8 +53,8 @@ public class ProduceController {
     public ResponseEntity<MultiResponse<ProduceResponse, Produce>> getProduceList(
             @RequestParam(value = "userId", required = false) String sellerId, @RequestParam(required = false, defaultValue = "all") String filter, @RequestParam List<Integer> statusNoList,
             Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
+        log.debug("컨트롤러 전체조회 진입");
         produceService.updateProduceStatus();
-
         return ResponseEntity.ok(produceService.getProducePage(statusNoList, pageable, name, sellerId, filter));
     }
 
