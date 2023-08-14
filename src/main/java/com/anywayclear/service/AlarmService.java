@@ -51,33 +51,46 @@ public class AlarmService  {
         // SSE 연결
         // emitter에 키에 토픽, 유저 정보를 담기
         // 알람 내용에 토픽 정보를 넣어 해당 토픽으로 에미터를 검색해 sse 데이터 보내기
-        System.out.println("AlarmService.createEmitter 진입");
-        SseEmitter emitter = new SseEmitter(Long.parseLong("100000"));
-        System.out.println("emitter 생성 : " + emitter);
-        System.out.println("userId = " + userId);
-        sseRepository.put(userId, emitter);
-        System.out.println("emitter 저장");
 
+        String key = userId + "_" + now;
+        SseEmitter emitter;
+
+        if (sseRepository.get(userId).isPresent()) {
+            sseRepository.delete(userId);
+            emitter = sseRepository.save(key, new SseEmitter(100000L * 4500L));
+        } else {
+            emitter = sseRepository.save(key, new SseEmitter(100000L * 4500L));
+        }
+
+
+        // 오류 발생 시 emitter 삭제
         emitter.onCompletion(() -> {
             System.out.println("onCompletion callback");
-            sseRepository.remove(userId);  // 만료되면 리스트에서 삭제
+
+            sseRepository.delete(userId);  // 만료되면 리스트에서 삭제
+
         });
         emitter.onTimeout(() -> {
             System.out.println("onTimeout callback");
             // 만료시 Repository에서 삭제
-            emitter.complete();
+            sseRepository.delete(userId);
+        });
+        emitter.onError((e) -> {
+            System.out.println("onError callback");
+            sseRepository.delete(userId);
         });
 
+
+        // 503 에러 방지 - 더미 이벤트 전송
         sendToClient(emitter, userId, "Connected", "subscribe");
         System.out.println("sse 알림 발송");
 
-        if (lastEventId!=null) { // 클라이언트가 미수신한 Event 유실 예방, 연결이 끊겼거나 미수신된 데이터를 다 찾아서 보내준다.
-//            Map<String, SseEmitter> events = sseRepository.getListByKeySuffix(userId);
-//            events.entrySet().stream()
-//                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-//                    .forEach(entry -> sendToClient(emitter, entry.getKey(), "Alarm", entry.getValue()));
-            SseEmitter event = sseRepository.get(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
-            sendToClient(emitter, userId, "Alarm", event);
+        if (!lastEventId.isEmpty()) { // 클라이언트가 미수신한 Event 유실 예방, 연결이 끊겼거나 미수신된 데이터를 다 찾아서 보내준다.
+            Map<String, Object> eventCaches = sseRepository.findAllEventCacheByUserId(userId);
+            eventCaches.entrySet().stream()
+                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+                    .forEach(entry -> sendToClient(emitter, entry.getKey(), "Alarm", entry.getValue()));
+
         }
 
         return emitter;
@@ -103,20 +116,17 @@ public class AlarmService  {
         // 받은 알람 SSE 전송
         // 해당 토픽의 SseEmitter 모두 가져옴
         receiverKeyList.forEach(
-                key -> {
-                    SseEmitter emitter = sseRepository.get(key).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
-                    sendToClient(emitter, key, "Alarm", alarm);
+                receiverKey -> {
+                    Map<String, SseEmitter> sseEmitters = sseRepository.findAllEmitterByUserId(receiverKey);
+                    sseEmitters.forEach(
+                            (key, emitter) -> {
+                                sseRepository.saveEventCache(key, alarm);
+                                sendToClient(emitter, key, "Alarm", alarm);
+                            }
+                    );
                 }
 
         );
-
-//        Map<String, SseEmitter> sseEmitters = sseRepository.getListByKeyPrefix(topicName);
-//        sseEmitters.forEach(
-//                (key, emitter) -> {
-//                    // 데이터 전송
-//                    sendToClient(emitter, key, "Alarm", alarm);
-//                }
-//        );
 
         // 레디스 저장 -> 키(발송인 정보) : 값(알람 객체)
         String key = "member:" + alarm.getSender() + ":alarm:" + alarm.getId(); // key 설정 -> member:memberId:alarm:alarmId;
@@ -180,15 +190,19 @@ public class AlarmService  {
                 emitter.send(SseEmitter.event()
                         .id(key)
                         .name(name)
-                        .data(data));
+                        .data(data)
+                        .reconnectTime(0));
                 log.info("data 전달 성공");
                 emitter.send("더미 데이터");
                 log.info("더미데이터 전달 성공");
+                emitter.complete();
+                sseRepository.delete(key);
             } catch (IOException e) {
-                sseRepository.remove(key);
+                sseRepository.delete(key);
+                emitter.completeWithError(e);
                 log.info("예외 발생");
             }
-            emitter.complete();
+
         });
     }
 }
