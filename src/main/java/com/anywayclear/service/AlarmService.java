@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,7 @@ public class AlarmService  {
     // 리포지토리 대신 템플릿 사용
     private final RedisTemplate<String, Alarm> redisAlarmTemplate;
 
+    private final ExecutorService excutor = Executors.newSingleThreadExecutor();
 
     // 구독 목록 불러오기 위한 서비스
     private final SubscribeRepository subscribeRepository;
@@ -171,13 +174,16 @@ public class AlarmService  {
 
     public void sendToClient(SseEmitter emitter, String key, String name, Object data) {
         log.info("key={}, name={}, message={}",key, name, data);
-        try {
-            emitter.send(SseEmitter.event()
-                    .id(key)
-                    .name(name)
-                    .data(data));
-        } catch (IOException e) {
-            sseRepository.remove(key);
-        }
+
+        excutor.execute(() -> {
+            try {
+                emitter.send(SseEmitter.event()
+                        .id(key)
+                        .name(name)
+                        .data(data));
+            } catch (IOException e) {
+                sseRepository.remove(key);
+            }
+        });
     }
 }
