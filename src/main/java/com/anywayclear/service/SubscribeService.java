@@ -34,15 +34,14 @@ public class SubscribeService {
     }
 
     @Transactional
-    public SseEmitter createSubscribe(String topicName, OAuth2User oAuth2User, String lastEventId, LocalDateTime now) {
+    public Long createSubscribe(String topicName, OAuth2User oAuth2User) {
         String userId = (String) oAuth2User.getAttributes().get("userId");
 
         Member consumer = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Member seller = memberRepository.findByUserId(topicName).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Subscribe subscribe = new Subscribe(consumer, seller);
         subscribeRepository.save(subscribe);
-
-        return alarmService.createEmitter(topicName, userId, lastEventId, now);
+        return subscribe.getId();
     }
 
     @Transactional
@@ -78,7 +77,7 @@ public class SubscribeService {
         return new IsSubResponse(isSub);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteSubscribe(String sellerId, String consumerId) {
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Member seller = memberRepository.findByUserId(sellerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
