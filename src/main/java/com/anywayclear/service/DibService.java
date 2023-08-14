@@ -39,15 +39,13 @@ public class DibService {
     }
 
     @Transactional
-    public SseEmitter createDib(Long topicName, OAuth2User oAuth2User, String lastEventId, LocalDateTime now) {
+    public Long createDib(Long topicName, OAuth2User oAuth2User) {
         String userId = (String) oAuth2User.getAttributes().get("userId");
-
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Produce produce = produceRepository.findById(topicName).orElseThrow(() -> new CustomException(INVALID_PRODUCE_ID));
         Dib dib = new Dib(member, produce);
         dibRepository.save(dib);
-
-        return alarmService.createEmitter(topicName.toString(), userId, lastEventId, now);
+        return dib.getId();
     }
 
     @Transactional(readOnly = true)

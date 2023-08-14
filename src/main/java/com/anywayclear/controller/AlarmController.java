@@ -5,7 +5,13 @@ import com.anywayclear.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,10 +21,16 @@ public class AlarmController {
     // 알림 서비스
     private final AlarmService alarmService;
 
-    @PostMapping("/topic/{topicName}")
+    @GetMapping(produces = "text/event-stream")
+    public ResponseEntity<SseEmitter> createEmitter(@AuthenticationPrincipal OAuth2User oAuth2User,
+                                                @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
+        return new ResponseEntity<>(alarmService.createEmitter(oAuth2User, lastEventId, LocalDateTime.now()), HttpStatus.OK);
+    }
+
+    @PostMapping("/{type}/{topicName}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void pushAlarm(@PathVariable String topicName, @RequestParam(name = "context") String context) {
-        alarmService.pushAlarm(topicName, context);
+    public void pushAlarm(@PathVariable("type") String type, @PathVariable("topiceName") String topicName) {
+        alarmService.pushAlarm(topicName, type);
     }
 
     @GetMapping("/{memberId}/subs")

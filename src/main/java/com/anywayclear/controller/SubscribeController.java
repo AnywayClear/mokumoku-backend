@@ -1,6 +1,7 @@
 package com.anywayclear.controller;
 
 import com.anywayclear.dto.response.IsSubResponse;
+import com.anywayclear.dto.response.SubscribeResponse;
 import com.anywayclear.dto.response.SubscribeResponseList;
 import com.anywayclear.service.SubscribeService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 import java.time.LocalDateTime;
 
 @RestController
@@ -22,11 +24,15 @@ public class SubscribeController {
         this.subscribeService = subscribeService;
     }
 
-    @GetMapping(value = "/{userId}/subscribe", produces = "text/event-stream")
-    public ResponseEntity<SseEmitter> createSubscribe(@PathVariable String userId, @AuthenticationPrincipal OAuth2User oAuth2User,
-                                                      @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
-        System.out.println("로그인 유저 = " + oAuth2User);
-        return new ResponseEntity<>(subscribeService.createSubscribe(userId, oAuth2User, lastEventId, LocalDateTime.now()), HttpStatus.OK);
+    @GetMapping(value = "/{userId}/subscribe")
+    public ResponseEntity<SseEmitter> createSubscribe(@PathVariable String userId, @AuthenticationPrincipal OAuth2User oAuth2User) {
+        Long id = subscribeService.createSubscribe(userId, oAuth2User);
+        return ResponseEntity.created(URI.create("/api/subscribes/" + id)).build();
+    }
+
+    @GetMapping("/{subscribe-id}")
+    public ResponseEntity<SubscribeResponse> getSubscribe(@PathVariable("subscribe-id") Long subscribeId) {
+        return ResponseEntity.ok(subscribeService.getSubscribe(subscribeId));
     }
 
     @GetMapping
