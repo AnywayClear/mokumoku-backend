@@ -27,8 +27,7 @@ public class AuctionService {
 
     private final DealService dealService;
 
-    public AuctionService(AuctionRepository auctionRepository,
-                          MemberRepository memberRepository, ProduceRepository produceRepository, DealService dealService) {
+    public AuctionService(AuctionRepository auctionRepository, MemberRepository memberRepository, ProduceRepository produceRepository, DealService dealService) {
         this.auctionRepository = auctionRepository;
         this.memberRepository = memberRepository;
         this.produceRepository = produceRepository;
@@ -51,24 +50,21 @@ public class AuctionService {
         }
         auction.setPrice(request.getPrice());   // 트랜잭션 내에서 변경시 자동 update
         auction.setNickname(consumer.getNickname());
-        return BiddingResponse.builder()
-                .userId(consumerId)
-                .nickname(consumer.getNickname())
-                .updatedAt(auction.getUpdatedAt())
-                .price(request.getPrice())
-                .build();
+        return BiddingResponse.builder().userId(consumerId).nickname(consumer.getNickname()).updatedAt(auction.getUpdatedAt()).price(request.getPrice()).build();
     }
 
     @Transactional
     public void checkAuctionFinished(long auctionId) {
-        Auction auction=auctionRepository.findById(auctionId).orElseThrow(()->new CustomException(INVALID_AUCTION_ID));
+        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         Produce produce = auction.getProduce();
         if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(5))) {
             auction.setClosed(true);
             produce.setEa(produce.getEa() - 1);
-            // 한 상품의 모든 경매가 종료되었을 경우
-            if (produce.getEa() == 0) {
-                produce.setStatus(2);
+            produce.setStatus(2);
+            for (Auction a : produce.getAuctionList()) {
+                if (!a.isClosed()) {
+                    produce.setStatus(1);
+                }
             }
         }
     }
@@ -85,12 +81,7 @@ public class AuctionService {
     public Long changeFinished(long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         auction.setClosed(true);
-        DealCreateRequest dealCreateRequest = DealCreateRequest.builder()
-                .endPrice(auction.getPrice())
-                .consumer(memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER)))
-                .seller(auction.getProduce().getSeller())
-                .produce(auction.getProduce())
-                .build();
+        DealCreateRequest dealCreateRequest = DealCreateRequest.builder().endPrice(auction.getPrice()).consumer(memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER))).seller(auction.getProduce().getSeller()).produce(auction.getProduce()).build();
         return dealService.createDeal(dealCreateRequest);
     }
 
@@ -101,8 +92,6 @@ public class AuctionService {
     public BiddingResponse autoBidding(long auctionId, BiddingRequest request) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         auction.setPrice(auction.getPrice() + 100);
-        return BiddingResponse.builder()
-                .price(request.getPrice())
-                .build();
+        return BiddingResponse.builder().price(request.getPrice()).build();
     }
 }
