@@ -62,6 +62,7 @@ public class ProduceController {
 
     @GetMapping("/{id}/auctions")
     public ResponseEntity<AuctionResponseList> getAuctionList(@PathVariable long id) {
+        produceService.updateProduceStatus();
         return ResponseEntity.ok(auctionService.getAuctionList(id));
     }
 }
