@@ -32,12 +32,12 @@ public class DibController {
         return ResponseEntity.created(URI.create("/api/dibs/" + id)).build();
     }
 
-    @GetMapping("/{dib-id}")
+    @GetMapping("/dib/{dib-id}")
     public ResponseEntity<DibResponse> getDib(@PathVariable("dib-id") Long dibId) {
         return ResponseEntity.ok(dibService.getDib(dibId));
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<MultiResponse<DibResponse, Dib>> getDibList(@PathVariable("userId") String userId, Pageable pageable) {
         return ResponseEntity.ok(dibService.getDibPage(userId, pageable));
     }
