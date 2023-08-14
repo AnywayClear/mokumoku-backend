@@ -181,9 +181,14 @@ public class AlarmService  {
                         .id(key)
                         .name(name)
                         .data(data));
+                log.info("data 전달 성공");
+                emitter.send("더미 데이터");
+                log.info("더미데이터 전달 성공");
             } catch (IOException e) {
                 sseRepository.remove(key);
+                log.info("예외 발생");
             }
+            emitter.complete();
         });
     }
 }
