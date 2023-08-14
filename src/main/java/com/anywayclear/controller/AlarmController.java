@@ -24,6 +24,7 @@ public class AlarmController {
     @GetMapping(produces = "text/event-stream")
     public ResponseEntity<SseEmitter> createEmitter(@AuthenticationPrincipal OAuth2User oAuth2User,
                                                 @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId) {
+
         return new ResponseEntity<>(alarmService.createEmitter(oAuth2User, lastEventId, LocalDateTime.now()), HttpStatus.OK);
     }
 

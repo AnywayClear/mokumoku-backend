@@ -27,12 +27,9 @@ public class ProduceCreateRequest {
     @NotNull
 //    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") // 기본 형태는 자동 바인딩
     private LocalDateTime startDate;
-    @NotNull
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime endDate;
 
     @Builder
-    public ProduceCreateRequest(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate) {
+    public ProduceCreateRequest(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate) {
         this.name = name;
         this.description = description;
         this.image = image;
@@ -40,6 +37,5 @@ public class ProduceCreateRequest {
         this.kg = kg;
         this.ea = ea;
         this.startDate = startDate;
-        this.endDate = endDate;
     }
 }
