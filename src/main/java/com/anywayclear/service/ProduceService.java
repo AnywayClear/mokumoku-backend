@@ -10,6 +10,7 @@ import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import static com.anywayclear.exception.ExceptionCode.INVALID_MEMBER;
 import static com.anywayclear.exception.ExceptionCode.INVALID_PRODUCE_ID;
 
 @Service
+@Slf4j
 public class ProduceService {
     private final ProduceRepository produceRepository;
     private final AuctionRepository auctionRepository;
@@ -65,10 +67,12 @@ public class ProduceService {
 
     @Transactional
     public void updateProduceStatus() {
+        log.debug("농산물 상태 검사 시작");
         for (Produce produce : produceRepository.findByStatus(1)) {
             for (Auction auction : produce.getAuctionList()) {
                 auctionService.checkAuctionFinished(auction.getId());
             }
         }
+        log.debug("농산물 상태 검사 종료");
     }
 }
