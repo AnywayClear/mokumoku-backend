@@ -58,7 +58,7 @@ public class Produce extends BaseTime {
     private List<Dib> dibList = new ArrayList<>();
 
     @Builder
-    public Produce(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate, LocalDateTime endDate, int status) {
+    public Produce(String name, String description, String image, int startPrice, int kg, int ea, LocalDateTime startDate,LocalDateTime endDate, int status) {
         this.name = name;
         this.description = description;
         this.image = image;
@@ -79,7 +79,7 @@ public class Produce extends BaseTime {
                 .kg(request.getKg())
                 .ea(request.getEa())
                 .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .endDate(request.getStartDate())
                 .status(0)
                 .build();
     }
