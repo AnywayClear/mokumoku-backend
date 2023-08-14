@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.anywayclear.exception.ExceptionCode.INVALID_DEAL;
@@ -38,13 +39,21 @@ public class DealService {
     }
 
     @Transactional(readOnly = true)
-    public MultiResponse<DealResponse, Deal> getDealList(String userId, Pageable pageable) {
+    public MultiResponse<DealResponse, Deal> getDealList(String userId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         Page<Deal> dealPage;
-        if (member.getRole().equals("ROLE_SELLER")) { // 판매자 일 경우
-            dealPage = dealRepository.findAllBySeller(member, pageable);
-        } else { // 소비자 일 경우
-            dealPage = dealRepository.findAllByConsumer(member, pageable);
+        if (startDate != null && endDate != null) {
+            if (member.getRole().equals("ROLE_SELLER")) { // 판매자 일 경우
+                dealPage = dealRepository.findAllBySellerAndProduce_EndDateBetween(member, startDate, endDate, pageable);
+            } else { // 소비자 일 경우
+                dealPage = dealRepository.findAllByConsumerAndProduce_EndDateBetween(member, startDate, endDate, pageable);
+            }
+        } else {
+            if (member.getRole().equals("ROLE_SELLER")) { // 판매자 일 경우
+                dealPage = dealRepository.findAllBySeller(member, pageable);
+            } else { // 소비자 일 경우
+                dealPage = dealRepository.findAllByConsumer(member, pageable);
+            }
         }
         List<DealResponse> dealResponseList = dealPage.map(DealResponse::toResponse).getContent();
         return new MultiResponse<>(dealResponseList, dealPage);

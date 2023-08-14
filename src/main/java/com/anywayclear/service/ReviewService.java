@@ -93,8 +93,8 @@ public class ReviewService {
         Page<Review> reviewPage;
 
         boolean isSeller = member.getRole().equals("ROLE_SELLER");
-        boolean hasQuery = q != null;
-        boolean hasSort = sortedBy != null;
+        boolean hasQuery = (q != null);
+        boolean hasSort = (sortedBy != null);
 
         if (isSeller) {
             if (!hasQuery && !hasSort) {
