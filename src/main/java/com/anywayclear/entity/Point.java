@@ -1,5 +1,6 @@
 package com.anywayclear.entity;
 
+import com.anywayclear.util.BaseTime;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Point extends BaseTime{
+public class Point extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

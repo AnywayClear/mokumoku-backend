@@ -1,19 +1,22 @@
 package com.anywayclear.service;
 
 import com.anywayclear.dto.request.ReviewRequest;
+import com.anywayclear.dto.response.MultiResponse;
 import com.anywayclear.dto.response.ReviewResponse;
-import com.anywayclear.entity.Auction;
 import com.anywayclear.entity.Deal;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Review;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.exception.ExceptionCode;
-import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.repository.DealRepository;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ReviewRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ReviewService {
@@ -56,6 +59,7 @@ public class ReviewService {
         return reviewId;
     }
 
+    @Transactional
     public Long deleteReview(Long reviewId, String reviewerId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_REVIEW));
 
@@ -64,10 +68,8 @@ public class ReviewService {
         }
 
         Deal deal = review.getDeal();
-        System.out.println(deal);
         deal.setReview(null);
 
-        dealRepository.save(deal);
         reviewRepository.delete(review);
 
         return reviewId;
@@ -83,5 +85,40 @@ public class ReviewService {
         if (review == null) return null;
 
         return ReviewResponse.toResponse(review);
+    }
+
+    @Transactional
+    public MultiResponse<ReviewResponse, Review> getReviewList(String userId, Pageable pageable, String q, String sortedBy) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
+        Page<Review> reviewPage;
+
+        boolean isSeller = member.getRole().equals("ROLE_SELLER");
+        boolean hasQuery = (q != null);
+        boolean hasSort = (sortedBy != null);
+
+        if (isSeller) {
+            if (!hasQuery && !hasSort) {
+                reviewPage = reviewRepository.findAllByDeal_SellerOrderByDeal_Produce_EndDate(member, pageable);
+            } else if (!hasQuery) {
+                reviewPage = reviewRepository.findAllByDeal_SellerOrderByDeal_Produce_StartDate(member, pageable);
+            } else if (!hasSort) {
+                reviewPage = reviewRepository.findAllByDeal_SellerAndDeal_Produce_NameContainingOrderByDeal_Produce_EndDate(member, q, pageable);
+            } else {
+                reviewPage = reviewRepository.findAllByDeal_SellerAndDeal_Produce_NameContainingOrderByDeal_Produce_StartDate(member, q, pageable);
+            }
+        } else {
+            if (!hasQuery && !hasSort) {
+                reviewPage = reviewRepository.findAllByDeal_ConsumerOrderByDeal_Produce_EndDate(member, pageable);
+            } else if (!hasQuery) {
+                reviewPage = reviewRepository.findAllByDeal_ConsumerOrderByDeal_Produce_StartDate(member, pageable);
+            } else if (!hasSort) {
+                reviewPage = reviewRepository.findAllByDeal_ConsumerAndDeal_Produce_NameContainingOrderByDeal_Produce_EndDate(member, q, pageable);
+            } else {
+                reviewPage = reviewRepository.findAllByDeal_ConsumerAndDeal_Produce_NameContainingOrderByDeal_Produce_StartDate(member, q, pageable);
+            }
+        }
+
+        List<ReviewResponse> reviewResponseList = reviewPage.map(ReviewResponse::toResponse).getContent();
+        return new MultiResponse<>(reviewResponseList, reviewPage);
     }
 }

@@ -1,6 +1,7 @@
 package com.anywayclear.entity;
 
 import com.anywayclear.dto.request.ProduceCreateRequest;
+import com.anywayclear.util.BaseTime;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-public class Produce {
+public class Produce extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

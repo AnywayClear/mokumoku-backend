@@ -14,18 +14,18 @@ public class ReviewResponse {
     private int score;
     private LocalDateTime createdAt;
     private DealResponse deal;
-    private String memberUserId;
-    private String memberNickname;
+    private String reviewerId;
+    private String reviewerNickname;
 
     @Builder
-    public ReviewResponse(Long id, String comment, int score, LocalDateTime createdAt, DealResponse deal, String memberUserId, String memberNickname) {
+    public ReviewResponse(Long id, String comment, int score, LocalDateTime createdAt, DealResponse deal, String reviewerId, String reviewerNickname) {
         this.id = id;
         this.comment = comment;
         this.score = score;
         this.createdAt = createdAt;
         this.deal = deal;
-        this.memberUserId = memberUserId;
-        this.memberNickname = memberNickname;
+        this.reviewerId = reviewerId;
+        this.reviewerNickname = reviewerNickname;
     }
 
     public static ReviewResponse toResponse(Review review) {
@@ -35,8 +35,8 @@ public class ReviewResponse {
                 .score(review.getScore())
                 .createdAt(review.getCreatedAt())
                 .deal(DealResponse.toResponse(review.getDeal()))
-                .memberUserId(review.getMember().getUserId())
-                .memberNickname(review.getMember().getNickname())
+                .reviewerId(review.getMember().getUserId())
+                .reviewerNickname(review.getMember().getNickname())
                 .build();
     }
 }

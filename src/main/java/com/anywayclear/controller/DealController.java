@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/deals")
@@ -30,8 +32,14 @@ public class DealController {
     }
 
     @GetMapping
-    public ResponseEntity<MultiResponse<DealResponse, Deal>> getDealList(@AuthenticationPrincipal OAuth2User oAuth2User, Pageable pageable) {
-        String userId = (String) oAuth2User.getAttributes().get("userId");
-        return ResponseEntity.ok(dealService.getDealList(userId, pageable));
+    public ResponseEntity<MultiResponse<DealResponse, Deal>> getDealList(
+            @RequestParam(value = "user-id") String userId,
+            @RequestParam(value = "start-date", required = false) String startDateString,
+            @RequestParam(value = "end-date", required = false) String endDateString,
+            Pageable pageable) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startDate = LocalDateTime.parse(startDateString + " 00:00:00", formatter);
+        LocalDateTime endDate = LocalDateTime.parse(endDateString + " 00:00:00", formatter);
+        return ResponseEntity.ok(dealService.getDealList(userId, startDate, endDate, pageable));
     }
 }
