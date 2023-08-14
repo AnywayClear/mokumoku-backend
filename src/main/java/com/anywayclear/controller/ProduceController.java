@@ -10,6 +10,8 @@ import com.anywayclear.service.AuctionService;
 import com.anywayclear.service.ProduceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -52,7 +54,7 @@ public class ProduceController {
     @GetMapping
     public ResponseEntity<MultiResponse<ProduceResponse, Produce>> getProduceList(
             @RequestParam(value = "userId", required = false) String sellerId, @RequestParam(required = false, defaultValue = "all") String filter, @RequestParam List<Integer> statusNoList,
-            Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 9) Pageable pageable, @RequestParam(required = false, defaultValue = "") String name) {
         log.debug("컨트롤러 전체조회 진입");
         produceService.updateProduceStatus();
         return ResponseEntity.ok(produceService.getProducePage(statusNoList, pageable, name, sellerId, filter));

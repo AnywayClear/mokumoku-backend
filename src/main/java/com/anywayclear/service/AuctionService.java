@@ -59,7 +59,7 @@ public class AuctionService {
         Produce produce = auction.getProduce();
         if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(5))) {
             auction.setClosed(true);
-            produce.setEa(produce.getEa() - 1);
+//            produce.setEa(produce.getEa() - 1);
             produce.setStatus(2);
             for (Auction a : produce.getAuctionList()) {
                 if (!a.isClosed()) {
