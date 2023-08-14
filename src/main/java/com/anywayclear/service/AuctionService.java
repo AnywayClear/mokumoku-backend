@@ -56,11 +56,20 @@ public class AuctionService {
     @Transactional
     public void checkAuctionFinished(long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
+        Member consumer = memberRepository.findByNickname(auction.getNickname()).orElseThrow(()->new CustomException(INVALID_MEMBER));
         Produce produce = auction.getProduce();
-        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(5))) {
+        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(4))) {
             auction.setClosed(true);
+            produce.setEndDate(auction.getUpdatedAt());
 //            produce.setEa(produce.getEa() - 1);
-            produce.setStatus(2);
+            DealCreateRequest dealCreateRequest = DealCreateRequest.builder()
+                    .endPrice(auction.getPrice())
+                    .produce(produce)
+                    .seller(produce.getSeller())
+                    .consumer(consumer)
+                    .build();
+            dealService.createDeal(dealCreateRequest);
+                    produce.setStatus(2);
             for (Auction a : produce.getAuctionList()) {
                 if (!a.isClosed()) {
                     produce.setStatus(1);

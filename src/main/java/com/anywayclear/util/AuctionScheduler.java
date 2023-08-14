@@ -23,7 +23,7 @@ public class AuctionScheduler {
     public void updateAuctionStatus() {
         log.debug("스케줄링 시작");
         for (Produce produce : produceRepository.findAll()) {
-            if (produce.getStatus() == 0 && LocalDateTime.now().isAfter(produce.getStartDate())) {
+            if (produce.getStatus() == 0 && LocalDateTime.now().isAfter(produce.getStartDate().minusMinutes(1))) {
                 produce.setStatus(1);
             }
         }
