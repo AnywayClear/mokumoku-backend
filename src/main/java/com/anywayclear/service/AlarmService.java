@@ -56,9 +56,9 @@ public class AlarmService  {
 
         if (sseRepository.get(userId).isPresent()) {
             sseRepository.delete(userId);
-            emitter = sseRepository.save(key, new SseEmitter(100000L * 45L));
+            emitter = sseRepository.save(key, new SseEmitter(100000L * 4500L));
         } else {
-            emitter = sseRepository.save(key, new SseEmitter(100000L * 45L));
+            emitter = sseRepository.save(key, new SseEmitter(100000L * 4500L));
         }
 
         // 오류 발생 시 emitter 삭제
