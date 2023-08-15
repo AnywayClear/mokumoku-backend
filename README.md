@@ -11,6 +11,18 @@
 
 ---
 
-## ⚙개발 핵심 기능
+## ⚙개발 핵심 기능 및 인프라
+
+### 🔧기술스택
 
 <img title="" src="README_assets/2023-08-16-00-32-47-image.png" alt="" data-align="center">
+
+### 🌐인프라 및 아키텍처
+
+> - **GitHub Actions 사용하여 ECR에 Docker Image 빌드 후 업로드**
+> 
+> - **Docker Compose로 Redis와 함께 배포**
+> 
+> - **RDB는 Amazon RDS MySQL 사용**
+
+<img title="" src="README_assets/2023-08-16-00-45-59-image.png" alt="" data-align="center" width="760">
