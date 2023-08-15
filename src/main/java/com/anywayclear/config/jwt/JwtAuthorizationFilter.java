@@ -2,7 +2,6 @@ package com.anywayclear.config.jwt;
 
 import com.anywayclear.config.JwtConfig;
 import com.anywayclear.entity.Member;
-import com.anywayclear.exception.CustomException;
 import com.anywayclear.exception.ErrorResponse;
 import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
@@ -20,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +66,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix() + " ", "");
             String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(accessToken).getClaim("userId").asString();
             if (userId != null) {
-                Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
+                Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("해당 JWT의 member가 없습니다. userId: " + userId));
                 if (!member.isDeleted()) {
                     if (checkDuplicatedLogin(userId, accessToken, response)) return; // 중복로그인 시 예외처리
                     processValidJwt(member);
