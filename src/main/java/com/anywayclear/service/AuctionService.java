@@ -50,7 +50,8 @@ public class AuctionService {
         }
         auction.setPrice(request.getPrice());   // 트랜잭션 내에서 변경시 자동 update
         auction.setNickname(consumer.getNickname());
-        return BiddingResponse.builder().userId(consumerId).nickname(consumer.getNickname()).updatedAt(auction.getUpdatedAt()).price(request.getPrice()).build();
+        auction.setLastBidding(LocalDateTime.now());
+        return BiddingResponse.builder().userId(consumerId).nickname(consumer.getNickname()).updatedAt(auction.getLastBidding()).price(request.getPrice()).build();
     }
 
     @Transactional
