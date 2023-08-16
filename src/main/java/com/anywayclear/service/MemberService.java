@@ -59,6 +59,7 @@ public class MemberService {
     public MemberDeleteResponse deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
         member.setDeleted(true);
+        SecurityContextHolder.clearContext();
         return MemberDeleteResponse.toResponse(memberRepository.save(member));
     }
 }

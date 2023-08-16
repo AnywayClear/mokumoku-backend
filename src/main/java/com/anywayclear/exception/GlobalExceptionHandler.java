@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.validation.ConstraintViolationException;
-
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import static com.anywayclear.exception.ExceptionCode.*;

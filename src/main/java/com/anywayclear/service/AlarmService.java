@@ -51,6 +51,7 @@ public class AlarmService  {
         // SSE 연결
         // emitter에 키에 토픽, 유저 정보를 담기
         // 알람 내용에 토픽 정보를 넣어 해당 토픽으로 에미터를 검색해 sse 데이터 보내기
+
         String key = userId + "_" + now;
         SseEmitter emitter;
 
@@ -65,6 +66,7 @@ public class AlarmService  {
         emitter.onCompletion(() -> {
             System.out.println("onCompletion callback");
             sseRepository.delete(userId);  // 만료되면 리스트에서 삭제
+
         });
         emitter.onTimeout(() -> {
             System.out.println("onTimeout callback");
@@ -76,8 +78,10 @@ public class AlarmService  {
             sseRepository.delete(userId);
         });
 
+
         // 503 에러 방지 - 더미 이벤트 전송
         sendToClient(emitter, key, "Connected", "subscribe");
+
         System.out.println("sse 알림 발송");
 
         if (!lastEventId.isEmpty()) { // 클라이언트가 미수신한 Event 유실 예방, 연결이 끊겼거나 미수신된 데이터를 다 찾아서 보내준다.
@@ -85,6 +89,7 @@ public class AlarmService  {
             eventCaches.entrySet().stream()
                     .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), "Alarm", entry.getValue()));
+
         }
 
         return emitter;
@@ -119,6 +124,7 @@ public class AlarmService  {
                             }
                     );
                 }
+
         );
 
 

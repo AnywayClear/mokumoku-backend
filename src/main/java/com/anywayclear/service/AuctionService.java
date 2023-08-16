@@ -50,16 +50,28 @@ public class AuctionService {
         }
         auction.setPrice(request.getPrice());   // 트랜잭션 내에서 변경시 자동 update
         auction.setNickname(consumer.getNickname());
-        return BiddingResponse.builder().userId(consumerId).nickname(consumer.getNickname()).updatedAt(auction.getUpdatedAt()).price(request.getPrice()).build();
+        auction.setLastBidding(LocalDateTime.now());
+        return BiddingResponse.builder().userId(consumerId).nickname(consumer.getNickname()).updatedAt(auction.getLastBidding()).price(request.getPrice()).build();
     }
 
     @Transactional
     public void checkAuctionFinished(long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         Produce produce = auction.getProduce();
-        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(5))) {
+        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(4))) {
             auction.setClosed(true);
+            produce.setEndDate(auction.getUpdatedAt());
 //            produce.setEa(produce.getEa() - 1);
+            if(!produce.getStartDate().equals(auction.getLastBidding())) {
+                Member consumer = memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER));
+                DealCreateRequest dealCreateRequest = DealCreateRequest.builder()
+                        .endPrice(auction.getPrice())
+                        .produce(produce)
+                        .seller(produce.getSeller())
+                        .consumer(consumer)
+                        .build();
+                dealService.createDeal(dealCreateRequest);
+            }
             produce.setStatus(2);
             for (Auction a : produce.getAuctionList()) {
                 if (!a.isClosed()) {
