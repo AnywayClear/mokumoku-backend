@@ -24,14 +24,15 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
     private final ProduceRepository produceRepository;
-
     private final DealService dealService;
+    private final NotificationService notificationService;
 
-    public AuctionService(AuctionRepository auctionRepository, MemberRepository memberRepository, ProduceRepository produceRepository, DealService dealService) {
+    public AuctionService(AuctionRepository auctionRepository, MemberRepository memberRepository, ProduceRepository produceRepository, DealService dealService, NotificationService notificationService) {
         this.auctionRepository = auctionRepository;
         this.memberRepository = memberRepository;
         this.produceRepository = produceRepository;
         this.dealService = dealService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -41,7 +42,8 @@ public class AuctionService {
             throw new CustomException(INVALID_AUCTION_STATUS);
         }
         /* 테스트동안 제한 안함 */
-        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(4))) {
+        // 테스트용으로 1분
+        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
             throw new CustomException(EXPIRED_AUCTION_TIME);
         }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
@@ -58,11 +60,11 @@ public class AuctionService {
     public void checkAuctionFinished(long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         Produce produce = auction.getProduce();
-        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(4))) {
+        // 테스트용으로 1분
+        if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(1))) {
             auction.setClosed(true);
-            produce.setEndDate(auction.getUpdatedAt());
-//            produce.setEa(produce.getEa() - 1);
-            if(!produce.getStartDate().equals(auction.getLastBidding())) {
+            produce.setEndDate(auction.getLastBidding());
+            if (!produce.getStartDate().equals(auction.getLastBidding())) {
                 Member consumer = memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER));
                 DealCreateRequest dealCreateRequest = DealCreateRequest.builder()
                         .endPrice(auction.getPrice())
@@ -71,6 +73,7 @@ public class AuctionService {
                         .consumer(consumer)
                         .build();
                 dealService.createDeal(dealCreateRequest);
+                notificationService.notify(consumer.getUserId(), auction);
             }
             produce.setStatus(2);
             for (Auction a : produce.getAuctionList()) {

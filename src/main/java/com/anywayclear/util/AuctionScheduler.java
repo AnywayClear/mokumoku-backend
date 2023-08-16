@@ -2,6 +2,7 @@ package com.anywayclear.util;
 
 import com.anywayclear.entity.Produce;
 import com.anywayclear.repository.ProduceRepository;
+import com.anywayclear.service.ProduceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -14,9 +15,11 @@ import java.time.LocalDateTime;
 @Slf4j
 public class AuctionScheduler {
     private final ProduceRepository produceRepository;
+    private final ProduceService produceService;
 
-    public AuctionScheduler(ProduceRepository produceRepository) {
+    public AuctionScheduler(ProduceRepository produceRepository, ProduceService produceService) {
         this.produceRepository = produceRepository;
+        this.produceService = produceService;
     }
 
     @Scheduled(cron = "0 0/1 * * * ?", zone = "Asia/Seoul")
@@ -27,5 +30,7 @@ public class AuctionScheduler {
                 produce.setStatus(1);
             }
         }
+        produceService.updateProduceStatus();
+        log.debug("스케줄링 종료");
     }
 }
