@@ -20,6 +20,16 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @PostMapping("{dealId}")
+    public ResponseEntity<Long> createReview(
+            @RequestBody ReviewRequest request,
+            @PathVariable("dealId") Long dealId,
+            @AuthenticationPrincipal OAuth2User oAuth2User
+    ) {
+        String userId = (String) oAuth2User.getAttributes().get("userId");
+        return ResponseEntity.ok(reviewService.createReview(userId, dealId, request));
+    }
+
     @GetMapping("/{dealId}")
     public ResponseEntity<ReviewResponse> getReview(
             @PathVariable("dealId") Long dealId) {

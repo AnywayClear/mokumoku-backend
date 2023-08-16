@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,7 @@ public class ProduceController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasRole('ROLE_CONSUMER')")
-//    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
+    @PreAuthorize("hasRole('ROLE_SELLER')")
     public ResponseEntity<Void> createProduce(@AuthenticationPrincipal OAuth2User oAuth2User, @Valid @RequestBody ProduceCreateRequest request) {
         String sellerId = (String) oAuth2User.getAttributes().get("userId");
         final Long id = produceService.createProduce(request, sellerId);
@@ -45,7 +45,6 @@ public class ProduceController {
     }
 
     @GetMapping("/{id}")
-//    @Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
     public ResponseEntity<ProduceResponse> getProduce(@Positive @PathVariable("id") long id) {
         produceService.updateProduceStatus();
         return ResponseEntity.ok(produceService.getProduce(id));
