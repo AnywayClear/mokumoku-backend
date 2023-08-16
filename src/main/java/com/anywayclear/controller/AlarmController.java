@@ -24,21 +24,17 @@ public class AlarmController {
     @GetMapping(produces = "text/event-stream")
     public ResponseEntity<SseEmitter> createEmitter(@AuthenticationPrincipal OAuth2User oAuth2User,
                                                 @RequestHeader(value = "Last-Event_ID", required = false, defaultValue = "") String lastEventId) {
-        return new ResponseEntity<>(alarmService.createEmitter(oAuth2User, lastEventId, LocalDateTime.now()), HttpStatus.OK);
+        return new ResponseEntity<>(alarmService.createEmitter(oAuth2User, lastEventId), HttpStatus.OK);
     }
 
-    @PostMapping("/{type}/{topicName}")
+    @PostMapping("type/{type}/topic/{topicName}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void pushAlarm(@PathVariable("type") String type, @PathVariable("topiceName") String topicName) {
-        alarmService.pushAlarm(topicName, type);
+    public void pushAlarm(@PathVariable("type") String type, @PathVariable("topicName") String topicName) {
+        alarmService.pushAlarm(type, topicName, LocalDateTime.now());
     }
 
-    @GetMapping("/{memberId}/subs")
-    public ResponseEntity<AlarmResponseList> getSubscribeAlarmList(@PathVariable String memberId) {
-        return ResponseEntity.ok(alarmService.getSubscribeAlarmList(memberId));
-    }
-    @GetMapping("/{memberId}/dibs")
-    public ResponseEntity<AlarmResponseList> getDibAlarmList(@PathVariable String memberId) {
-        return ResponseEntity.ok(alarmService.getDibAlarmList(memberId));
+    @GetMapping("/{memberId}")
+    public ResponseEntity<AlarmResponseList> getAlarmList(@PathVariable String memberId) {
+        return ResponseEntity.ok(alarmService.getAlarmList(memberId));
     }
 }
