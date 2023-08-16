@@ -154,6 +154,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         } catch (EntityNotFoundException ex) {
             sendJsonResponse(response, ExceptionCode.INVALID_USER_ID);
             return null;
+        } catch (RedisConnectionFailureException ex) {
+            sendJsonResponse(response, ExceptionCode.UNCONNECTED_REDIS);
+            return null;
         }
     }
 
