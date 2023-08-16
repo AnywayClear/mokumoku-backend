@@ -26,8 +26,12 @@ public class SSEInMemoryRepository{
         eventCache.put(eventCacheId, event);
     }
 
-    public Optional<SseEmitter> get(String key) {
-        return Optional.ofNullable(sseEmitterMap.get(key));
+    public SseEmitter get(String key) {
+        return sseEmitterMap.get(key);
+    }
+
+    public Map<String, SseEmitter> findAllEmitter() {
+        return sseEmitterMap;
     }
 
     public Map<String, Object> findAllEventCacheByUserId(String userId) {
@@ -42,21 +46,9 @@ public class SSEInMemoryRepository{
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-//    public List<String> getKeyListByKeyPrefix(String keyPrefix){
-//        return sseEmitterMap.keySet().stream()
-//                .filter(key -> key.startsWith(keyPrefix))
-//                .collect(Collectors.toList());
-//    }
-
     public void delete(String key) {
         sseEmitterMap.remove(key);
     }
-
-//    public void deleteAllByKeyPrefix(String keyPrefix) {
-//        sseEmitterMap.forEach((key, emitter) -> {
-//            if (key.startsWith(keyPrefix)) sseEmitterMap.remove(key);
-//        });
-//    }
 
     public void deleteAllEmitterByUserId(String userId) {
         sseEmitterMap.forEach((key, emitter) -> {
