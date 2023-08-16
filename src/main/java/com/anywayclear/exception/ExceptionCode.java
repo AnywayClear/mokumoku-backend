@@ -36,6 +36,7 @@ public enum ExceptionCode {
 
     // 404 Not Found : 요청한 URI에 대한 리소스 없음
     INVALID_RESOURCE(NOT_FOUND, "요청한 리소스가 없습니다", 404),
+    INVALID_USER_ID(NOT_FOUND, "존재하지 않는 사용자 입니다", 404),
     INVALID_REVIEW(NOT_FOUND, "존재하지 않는 리뷰입니다", 404),
     INVALID_DEAL(NOT_FOUND, "존재하지 않는 거래입니다", 404),
 
@@ -46,6 +47,7 @@ public enum ExceptionCode {
     DUPLICATE_RESOURCE(CONFLICT, "", 409),
 
     // 500 INTERNAL_SERVER_ERROR : 서버 에러
+    UNCONNECTED_REDIS(INTERNAL_SERVER_ERROR, "Redis 연결 실패했습니다.", 500),
     SERVER_ERROR(INTERNAL_SERVER_ERROR,"", 500);
 
     private final HttpStatus httpStatus;

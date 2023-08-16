@@ -56,21 +56,21 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .accessDeniedHandler(jwtAccessDeniedHandler());
 
-        // 요청 설정
+        // 인가 설정
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS 메서드는 모두 허용
-//                        .antMatchers("/api/members/**").authenticated() // jwt없이 요청한건지 재확인 가능
-                        .antMatchers("/api/subscribes/**").authenticated() // jwt없이 요청한건지 재확인 가능
-                        .antMatchers("/api/dibs/**").authenticated() // jwt없이 요청한건지 재확인 가능
+                        .antMatchers("/api/members/**").authenticated()
+                        .antMatchers("/api/reviews/**").authenticated()
+                        .antMatchers("/api/points/**").authenticated()
+                        .antMatchers("/api/subscribes/**").authenticated()
+                        .antMatchers("/api/dibs/**").authenticated()
                                 .anyRequest().permitAll()
                 );
 
         // OAuth2 로그인 설정
         httpSecurity
                 .oauth2Login(oauth2Login -> oauth2Login
-                                // 로그인 페이지 지정
-//            .loginPage("https://mokumoku-git-develop-mokumoku.vercel.app")
                                 .userInfoEndpoint()
                                 .userService(custumOAuth2UserService)
                                 .and()
