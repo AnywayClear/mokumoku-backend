@@ -6,12 +6,10 @@ import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.entity.Auction;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
-import com.anywayclear.entity.Subscribe;
 import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
-import com.anywayclear.repository.SubscribeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,15 +30,15 @@ public class ProduceService {
     private final MemberRepository memberRepository;
     private final AuctionService auctionService;
 
-    private final AlarmService alarmService;
+    private final NotificationService notificationService;
 
 
-    public ProduceService(ProduceRepository produceRepository, AuctionRepository auctionRepository, MemberRepository memberRepository, AuctionService auctionService, AlarmService alarmService) {
+    public ProduceService(ProduceRepository produceRepository, AuctionRepository auctionRepository, MemberRepository memberRepository, AuctionService auctionService, NotificationService notificationService) {
         this.produceRepository = produceRepository;
         this.auctionRepository = auctionRepository;
         this.memberRepository = memberRepository;
         this.auctionService = auctionService;
-        this.alarmService = alarmService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -52,7 +50,7 @@ public class ProduceService {
         }
 
         // 구독자들에게 알림 발송
-        alarmService.pushAlarm("sub", sellerId, LocalDateTime.now());
+        notificationService.pushAlarm("sub", sellerId, LocalDateTime.now());
 
         return produce.getId();
     }

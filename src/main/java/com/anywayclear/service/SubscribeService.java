@@ -11,9 +11,7 @@ import com.anywayclear.repository.SubscribeRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +23,10 @@ public class SubscribeService {
     private final SubscribeRepository subscribeRepository;
     private final MemberRepository memberRepository;
 
-    private AlarmService alarmService;
 
-    public SubscribeService(SubscribeRepository subscribeRepository, MemberRepository memberRepository, AlarmService alarmService) {
+    public SubscribeService(SubscribeRepository subscribeRepository, MemberRepository memberRepository) {
         this.subscribeRepository = subscribeRepository;
         this.memberRepository = memberRepository;
-        this.alarmService = alarmService;
     }
 
     @Transactional

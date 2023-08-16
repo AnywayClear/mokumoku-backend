@@ -15,9 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.anywayclear.exception.ExceptionCode.*;
@@ -29,13 +27,10 @@ public class DibService {
     private final MemberRepository memberRepository;
     private final ProduceRepository produceRepository;
 
-    private final AlarmService alarmService;
-
-    public DibService(DibRepository dibRepository, MemberRepository memberRepository, ProduceRepository produceRepository, AlarmService alarmService) {
+    public DibService(DibRepository dibRepository, MemberRepository memberRepository, ProduceRepository produceRepository) {
         this.dibRepository = dibRepository;
         this.memberRepository = memberRepository;
         this.produceRepository = produceRepository;
-        this.alarmService = alarmService;
     }
 
     @Transactional
