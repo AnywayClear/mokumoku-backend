@@ -26,7 +26,7 @@ public class CorsConfig {
         // 모든 헤더를 허용 (필요한 경우 특정 헤더만 허용 가능)
         config.addAllowedHeader("*");
 
-        // 모든 exposed 헤더 허용
+        // 특정 exposed 헤더 허용
         config.addExposedHeader("newAccessToken");
 
         // 모든 HTTP 메서드를 허용 (필요한 경우 특정 메서드만 허용 가능)
