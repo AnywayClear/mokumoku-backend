@@ -8,6 +8,7 @@ import com.anywayclear.exception.CustomException;
 import com.anywayclear.exception.ExceptionCode;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.PointRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,12 @@ public class PointService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CustomException(ExceptionCode.INVALID_MEMBER));
         // 불러온 멤버 객체에서 포인트 객체 가져오기
         Point point = member.getPoint();
-        point.setBalance(request.getBalance());
-        return PointResponse.toResponse(pointRepository.save(point));
+        int balance = point.getBalance() + request.getBalance();
+        if (balance < 0) {
+            throw new CustomException(ExceptionCode.INVALID_POINT_UPDATE);
+        } else {
+            point.setBalance(balance);
+            return PointResponse.toResponse(pointRepository.save(point));
+        }
     }
 }
