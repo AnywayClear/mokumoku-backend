@@ -28,7 +28,7 @@ public class AuctionResponse {
                 .id(auction.getId())
                 .price(auction.getPrice())
                 .nickname(auction.getNickname())
-                .updatedAt(auction.getUpdatedAt())
+                .updatedAt(auction.getLastBidding())
                 .status(auction.isClosed())
                 .build();
     }
