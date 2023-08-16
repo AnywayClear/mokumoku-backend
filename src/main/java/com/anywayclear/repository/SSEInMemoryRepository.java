@@ -74,12 +74,4 @@ public class SSEInMemoryRepository{
         });
     }
 
-    public void deleteAllEventCacheByUserId(String userId) {
-        eventCache.forEach((key, emitter) -> {
-            if (key.startsWith(userId)) {
-                eventCache.remove(key);
-            }
-        });
-    }
-
 }
