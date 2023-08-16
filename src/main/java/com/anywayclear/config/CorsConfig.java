@@ -19,12 +19,16 @@ public class CorsConfig {
 
         // 요청과 응답에 인증 정보를 사용할 수 있도록 설정
         config.setAllowCredentials(true);
+
         // 모든 도메인에서 요청을 허용 (필요에 따라 특정 도메인만 허용 가능)
         config.addAllowedOriginPattern("*");
 
-
         // 모든 헤더를 허용 (필요한 경우 특정 헤더만 허용 가능)
         config.addAllowedHeader("*");
+
+        // 특정 exposed 헤더 허용
+        config.addExposedHeader("newAccessToken");
+
         // 모든 HTTP 메서드를 허용 (필요한 경우 특정 메서드만 허용 가능)
         config.addAllowedMethod("*");
 

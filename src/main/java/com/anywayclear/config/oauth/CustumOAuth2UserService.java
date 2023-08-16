@@ -35,7 +35,7 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
 
         Map<String, Object> userAttributes = createNewAttribute(member);
 
-        // Spring Security의 세션에 OAuth2User객체 저장됨
+        // Spring Security의 세션에 OAuth2User객체 저장
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole())), userAttributes, "id");
     }
 
@@ -62,7 +62,7 @@ public class CustumOAuth2UserService extends DefaultOAuth2UserService {
         if (member.isDeleted()) {
             member.setDeleted(false);
             memberRepository.save(member);
-            System.out.println("CustumOAuth2UserService : 재가입합니다");
+            System.out.println("CustumOAuth2UserService : 재가입합니다"); // 탈퇴회원이 다시 소셜 로그인하면 재가입
         } else {
             System.out.println("CustumOAuth2UserService : 이미 회원입니다");
         }

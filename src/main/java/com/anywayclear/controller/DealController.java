@@ -7,8 +7,6 @@ import com.anywayclear.entity.Deal;
 import com.anywayclear.service.DealService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +29,11 @@ public class DealController {
         return ResponseEntity.created(URI.create("/api/deals/" + id)).build();
     }
 
+    @PatchMapping("/{deal-id}")
+    public ResponseEntity<Void> credit(@PathVariable("deal-id") long dealId) {
+        dealService.credit(dealId);
+        return ResponseEntity.ok().build();
+    }
     @GetMapping
     public ResponseEntity<MultiResponse<DealResponse, Deal>> getDealList(
             @RequestParam(value = "user-id") String userId,
