@@ -33,6 +33,11 @@ public class DealService {
         return dealRepository.save(Deal.toEntity(request)).getId();
     }
 
+    @Transactional
+    public void credit(long dealId) {
+        Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new CustomException(INVALID_DEAL));
+        deal.setPaid(true);
+    }
     public DealResponse getDeal(Long id) {
         Deal deal = dealRepository.findById(id).orElseThrow(() -> new CustomException(INVALID_DEAL));
         return DealResponse.toResponse(deal);
