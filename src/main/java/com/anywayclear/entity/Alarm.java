@@ -19,15 +19,19 @@ public class Alarm implements Serializable { // 필드 직렬화를 위한 인�
 
     @Id
     private String id = UUID.randomUUID().toString(); // 랜덤 스트링 값 설정
-    private String sender; // 판매자일 경우 판매자 userId, 경매글일 경우 경매글 id
+    private int type;
+    private String senderId; // 판매자일 경우 판매자 userId, 경매글일 경우 경매글 id
+    private String senderName;
     private String context;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
 
     @Builder
-    public Alarm(String sender, String context) {
-        this.sender = sender;
+    public Alarm(int type, String senderId, String senderName, String context) {
+        this.type = type;
+        this.senderId = senderId;
+        this.senderName = senderName;
         this.context = context;
         this.createdAt = LocalDateTime.now();
     }
