@@ -41,9 +41,9 @@ public class AuctionService {
             throw new CustomException(INVALID_AUCTION_STATUS);
         }
         /* 테스트동안 제한 안함 */
-//        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(5))) {
-//            throw new CustomException(EXPIRED_AUCTION_TIME);
-//        }
+        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(4))) {
+            throw new CustomException(EXPIRED_AUCTION_TIME);
+        }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
         if (request.getPrice() < auction.getPrice() + 100) { // 가격 기준 정해지면 수정할 로직
             throw new CustomException(INVALID_PRICE);
