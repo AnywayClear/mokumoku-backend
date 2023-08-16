@@ -24,6 +24,7 @@ public class AuctionScheduler {
         this.produceRepository = produceRepository;
         this.produceService = produceService;
         this.alarmService = alarmService;
+    }
 
     @Scheduled(cron = "0 0/1 * * * ?", zone = "Asia/Seoul")
     public void updateAuctionStatus() {
