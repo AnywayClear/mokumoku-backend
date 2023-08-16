@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 import java.time.LocalDateTime;
 
 @RestController
@@ -25,13 +26,18 @@ public class DibController {
         this.dibService = dibService;
     }
 
-    @GetMapping(value = "/{produceId}/dib", produces = "text/event-stream")
-    public ResponseEntity<SseEmitter> createDib(@PathVariable Long produceId, @AuthenticationPrincipal OAuth2User oAuth2User,
-                                                      @RequestHeader(value = "Last-Event_ID", required = false) String lastEventId, HttpServletResponse response) {
-        return new ResponseEntity<>(dibService.createDib(produceId, oAuth2User, lastEventId, LocalDateTime.now()), HttpStatus.OK);
+    @PostMapping(value = "/{produceId}/dib")
+    public ResponseEntity<Void> createDib(@PathVariable Long produceId, @AuthenticationPrincipal OAuth2User oAuth2User) {
+        Long id = dibService.createDib(produceId, oAuth2User);
+        return ResponseEntity.created(URI.create("/api/dibs/" + id)).build();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/dib/{dib-id}")
+    public ResponseEntity<DibResponse> getDib(@PathVariable("dib-id") Long dibId) {
+        return ResponseEntity.ok(dibService.getDib(dibId));
+    }
+
+    @GetMapping("/user/{userId}")
     public ResponseEntity<MultiResponse<DibResponse, Dib>> getDibList(@PathVariable("userId") String userId, Pageable pageable) {
         return ResponseEntity.ok(dibService.getDibPage(userId, pageable));
     }

@@ -13,20 +13,17 @@ import java.time.LocalDateTime;
 public class PointResponse {
     private int balance;
     private LocalDateTime updatedAt;
-    private Member member;
 
     @Builder
-    public PointResponse(int balance, LocalDateTime updatedAt, Member member) {
+    public PointResponse(int balance, LocalDateTime updatedAt) {
         this.balance = balance;
         this.updatedAt = updatedAt;
-        this.member = member;
     }
 
     public static PointResponse toResponse(Point point) {
         return PointResponse.builder()
                 .balance(point.getBalance())
                 .updatedAt(point.getUpdatedAt())
-                .member(point.getMember())
                 .build();
     }
 }
