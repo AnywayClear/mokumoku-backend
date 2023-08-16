@@ -77,7 +77,7 @@ public class AlarmService  {
         });
 
         // 503 에러 방지 - 더미 이벤트 전송
-        sendToClient(emitter, userId, "Connected", "subscribe");
+        sendToClient(emitter, key, "Connected", "subscribe");
         System.out.println("sse 알림 발송");
 
         if (!lastEventId.isEmpty()) { // 클라이언트가 미수신한 Event 유실 예방, 연결이 끊겼거나 미수신된 데이터를 다 찾아서 보내준다.
