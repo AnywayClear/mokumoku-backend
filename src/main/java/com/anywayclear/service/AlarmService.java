@@ -62,11 +62,9 @@ public class AlarmService  {
             emitter = sseRepository.save(key, new SseEmitter(100000L * 4500L));
         }
 
-
         // 오류 발생 시 emitter 삭제
         emitter.onCompletion(() -> {
             System.out.println("onCompletion callback");
-
             sseRepository.delete(userId);  // 만료되면 리스트에서 삭제
 
         });
@@ -82,7 +80,8 @@ public class AlarmService  {
 
 
         // 503 에러 방지 - 더미 이벤트 전송
-        sendToClient(emitter, userId, "Connected", "subscribe");
+        sendToClient(emitter, key, "Connected", "subscribe");
+
         System.out.println("sse 알림 발송");
 
         if (!lastEventId.isEmpty()) { // 클라이언트가 미수신한 Event 유실 예방, 연결이 끊겼거나 미수신된 데이터를 다 찾아서 보내준다.
@@ -127,6 +126,7 @@ public class AlarmService  {
                 }
 
         );
+
 
         // 레디스 저장 -> 키(발송인 정보) : 값(알람 객체)
         String key = "member:" + alarm.getSender() + ":alarm:" + alarm.getId(); // key 설정 -> member:memberId:alarm:alarmId;
@@ -202,7 +202,6 @@ public class AlarmService  {
                 emitter.completeWithError(e);
                 log.info("예외 발생");
             }
-
         });
     }
 }
