@@ -81,7 +81,7 @@ public class SecurityConfig {
         // 로그아웃 설정
         httpSecurity.logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("http://localhost:3000");
+                .logoutSuccessUrl("https://moku--moku.vercel.app");
 
         // H2 사용을 위한 설정
         httpSecurity
