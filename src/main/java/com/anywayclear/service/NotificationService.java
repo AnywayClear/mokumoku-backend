@@ -95,7 +95,7 @@ public class NotificationService {
                     Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverKey);
                     emitterRepository.saveEventCache(receiverKey, AlarmResponse.toResponse(alarm));
                     sseEmitters.forEach((key, emitter) -> {
-                        sendToClient(emitter, key, "Alarm", AlarmResponse.toResponse(alarm));
+                        sendToClient(emitter, key, "sse", AlarmResponse.toResponse(alarm));
                         String redisKey = "member:" + receiverKey + ":alarm:" + alarm.getId();
                         redisAlarmTemplate.opsForValue().set(redisKey, alarm); // 레디스에 저장
                         redisAlarmTemplate.expire(redisKey, 1, TimeUnit.DAYS); // TTL 설정 ***** 테스트용
