@@ -3,10 +3,12 @@ package com.anywayclear.dto.response;
 import com.anywayclear.entity.Auction;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
 public class AuctionResponse {
     private final Long id;
     private final int price;

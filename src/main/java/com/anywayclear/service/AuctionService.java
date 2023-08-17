@@ -2,8 +2,10 @@ package com.anywayclear.service;
 
 import com.anywayclear.dto.request.BiddingRequest;
 import com.anywayclear.dto.request.DealCreateRequest;
+import com.anywayclear.dto.response.AuctionResponse;
 import com.anywayclear.dto.response.AuctionResponseList;
 import com.anywayclear.dto.response.BiddingResponse;
+import com.anywayclear.dto.response.ProduceResponse;
 import com.anywayclear.entity.Auction;
 import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
@@ -11,6 +13,7 @@ import com.anywayclear.exception.CustomException;
 import com.anywayclear.repository.AuctionRepository;
 import com.anywayclear.repository.MemberRepository;
 import com.anywayclear.repository.ProduceRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ import java.util.List;
 import static com.anywayclear.exception.ExceptionCode.*;
 
 @Service
+@Slf4j
 public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
@@ -43,7 +47,7 @@ public class AuctionService {
         }
         /* 테스트동안 제한 안함 */
         // 테스트용으로 1분
-        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
+        if (LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(1))) {
             throw new CustomException(EXPIRED_AUCTION_TIME);
         }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
@@ -61,6 +65,8 @@ public class AuctionService {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         Produce produce = auction.getProduce();
         // 테스트용으로 1분
+        log.debug(AuctionResponse.toResponse(auction).toString());
+        log.debug(ProduceResponse.toResponse(produce).toString());
         if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(1))) {
             auction.setClosed(true);
             produce.setEndDate(auction.getLastBidding());

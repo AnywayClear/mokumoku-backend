@@ -10,9 +10,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/alarms")
@@ -27,11 +24,11 @@ public class AlarmController {
         return new ResponseEntity<>(alarmService.createEmitter(oAuth2User, lastEventId), HttpStatus.OK);
     }
 
-    @PostMapping("type/{type}/topic/{topicName}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void pushAlarm(@PathVariable("type") String type, @PathVariable("topicName") String topicName) {
-        alarmService.pushAlarm(type, topicName, LocalDateTime.now());
-    }
+//    @PostMapping("type/{type}/topic/{topicName}")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public void pushAlarm(@PathVariable("type") String type, @PathVariable("topicName") String topicName) {
+//        alarmService.pushAlarm(type, topicName, LocalDateTime.now());
+//    }
 
     @GetMapping("/{memberId}")
     public ResponseEntity<AlarmResponseList> getAlarmList(@PathVariable String memberId) {
