@@ -98,7 +98,7 @@ public class NotificationService {
                     sendToClient(emitter, receiverKey, "Alarm", AlarmResponse.toResponse(alarm));
                     String redisKey = "member:" + receiverKey + ":alarm:" + alarm.getId();
                     redisAlarmTemplate.opsForValue().set(redisKey, alarm); // 레디스에 저장
-                    redisAlarmTemplate.expire(redisKey, 1, TimeUnit.MINUTES); // TTL 설정 ***** 테스트용
+                    redisAlarmTemplate.expire(redisKey, 1, TimeUnit.DAYS); // TTL 설정 ***** 테스트용
                 }
 
         );

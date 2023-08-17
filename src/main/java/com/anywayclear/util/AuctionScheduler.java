@@ -31,7 +31,7 @@ public class AuctionScheduler {
             if (produce.getStatus() == 0 && LocalDateTime.now().isAfter(produce.getStartDate().minusMinutes(1))) {
                 produce.setStatus(1);
                 // 경매 시작 알림 송신
-//                notificationService.pushAlarm("dib", produce.getId().toString(), LocalDateTime.now());
+                notificationService.pushAlarm("dib", produce.getId().toString(), LocalDateTime.now());
             }
         }
         produceService.updateProduceStatus();
