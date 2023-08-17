@@ -2,7 +2,7 @@ package com.anywayclear.config;
 
 import com.anywayclear.config.jwt.JwtAccessDeniedHandler;
 import com.anywayclear.config.jwt.JwtAuthorizationFilter;
-import com.anywayclear.config.oauth.CustumOAuth2UserService;
+import com.anywayclear.config.oauth.CustomOAuth2UserService;
 import com.anywayclear.config.oauth.OAuth2AuthenticationSuccessHandler;
 import com.anywayclear.config.oauth.OAuth2AuthenticationFailureHandler;
 import com.anywayclear.repository.MemberRepository;
@@ -29,7 +29,7 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
 
-    private final CustumOAuth2UserService custumOAuth2UserService;
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final CorsFilter corsFilter;
@@ -72,7 +72,7 @@ public class SecurityConfig {
         httpSecurity
                 .oauth2Login(oauth2Login -> oauth2Login
                                 .userInfoEndpoint()
-                                .userService(custumOAuth2UserService)
+                                .userService(customOAuth2UserService)
                                 .and()
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
