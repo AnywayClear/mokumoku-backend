@@ -57,6 +57,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         }
 
+        // aws target group health test 접근 허용
+        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String jwtHeader = request.getHeader(jwtConfig.getHeader());
 
         // JWT Header, Prefix 확인
