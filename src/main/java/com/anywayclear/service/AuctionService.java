@@ -2,6 +2,7 @@ package com.anywayclear.service;
 
 import com.anywayclear.dto.request.BiddingRequest;
 import com.anywayclear.dto.request.DealCreateRequest;
+import com.anywayclear.dto.response.AuctionResponse;
 import com.anywayclear.dto.response.AuctionResponseList;
 import com.anywayclear.dto.response.BiddingResponse;
 import com.anywayclear.dto.response.ProduceResponse;
@@ -46,7 +47,7 @@ public class AuctionService {
         }
         /* 테스트동안 제한 안함 */
         // 테스트용으로 1분
-        if (LocalDateTime.now().isAfter(auction.getUpdatedAt().plusMinutes(1))) {
+        if (LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(1))) {
             throw new CustomException(EXPIRED_AUCTION_TIME);
         }
         Member consumer = memberRepository.findByUserId(consumerId).orElseThrow(() -> new CustomException(INVALID_MEMBER));
@@ -64,6 +65,7 @@ public class AuctionService {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
         Produce produce = auction.getProduce();
         // 테스트용으로 1분
+        log.debug(AuctionResponse.toResponse(auction).toString());
         log.debug(ProduceResponse.toResponse(produce).toString());
         if (produce.getStatus() == 1 && !auction.isClosed() && LocalDateTime.now().isAfter(auction.getLastBidding().plusMinutes(1))) {
             auction.setClosed(true);

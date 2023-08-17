@@ -5,12 +5,14 @@ import com.anywayclear.entity.Member;
 import com.anywayclear.entity.Produce;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 //@Setter
+@ToString
 public class ProduceResponse {
     private final long id;
     private final String name;
