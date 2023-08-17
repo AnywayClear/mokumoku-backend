@@ -92,13 +92,14 @@ public class NotificationService {
         // 해당 토픽의 SseEmitter 모두 가져옴
         receiverKeyList.forEach(
                 receiverKey -> {
-                    SseEmitter emitter = emitterRepository.get(receiverKey);
-                    String keyWithTime = receiverKey + now;
-                    emitterRepository.saveEventCache(keyWithTime, AlarmResponse.toResponse(alarm));
-                    sendToClient(emitter, receiverKey, "Alarm", AlarmResponse.toResponse(alarm));
-                    String redisKey = "member:" + receiverKey + ":alarm:" + alarm.getId();
-                    redisAlarmTemplate.opsForValue().set(redisKey, alarm); // 레디스에 저장
-                    redisAlarmTemplate.expire(redisKey, 1, TimeUnit.DAYS); // TTL 설정 ***** 테스트용
+                    Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverKey);
+                    emitterRepository.saveEventCache(receiverKey, AlarmResponse.toResponse(alarm));
+                    sseEmitters.forEach((key, emitter) -> {
+                        sendToClient(emitter, key, "Alarm", AlarmResponse.toResponse(alarm));
+                        String redisKey = "member:" + receiverKey + ":alarm:" + alarm.getId();
+                        redisAlarmTemplate.opsForValue().set(redisKey, alarm); // 레디스에 저장
+                        redisAlarmTemplate.expire(redisKey, 1, TimeUnit.DAYS); // TTL 설정 ***** 테스트용
+                    });
                 }
 
         );
