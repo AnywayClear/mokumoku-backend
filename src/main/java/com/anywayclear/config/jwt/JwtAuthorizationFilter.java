@@ -58,7 +58,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         // aws target group health test 접근 허용
-        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/")) {
+        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/health-check")) {
             chain.doFilter(request, response);
             return;
         }
