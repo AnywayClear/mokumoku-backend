@@ -1,3 +1,6 @@
+# mokumoku introduction
+[mokumoku Notion](https://www.notion.so/flowerdonk/MokuMoku-be09a1c30fb949b9a177d45280161d0a)
+
 # mokumoku Backend Server
 
 ## 👨🏻‍💻Contributors
