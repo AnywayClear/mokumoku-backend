@@ -23,9 +23,6 @@ public class Point extends BaseTime {
     @Column(nullable = false)
     private int balance = 0;
 
-//    @Column(nullable = false)
-//    private LocalDateTime updatedAt;
-
     @OneToOne
     @JsonManagedReference // 순환참조 방지
     @JoinColumn(name = "member_id", referencedColumnName = "id")
@@ -34,6 +31,5 @@ public class Point extends BaseTime {
     @Builder
     public Point(Member member) {
         this.member = member;
-//        this.updatedAt = LocalDateTime.now();
     }
 }

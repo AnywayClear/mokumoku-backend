@@ -10,6 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BiddingRequest {
-//    private String userId;
     private int price;
 }

@@ -9,8 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SubscribeResponse {
-//    private Member consumer;
-//    private Member seller;
 
     private String userId;
     private String image;
@@ -22,18 +20,7 @@ public class SubscribeResponse {
         this.image = image;
         this.nickName = nickName;
     }
-//    @Builder
-//    public SubscribeResponse(Member consumer, Member seller) {
-//        this.consumer = consumer;
-//        this.seller = seller;
-//    }
 
-//    public static SubscribeResponse toResponse(Subscribe subscribe) {
-//        return SubscribeResponse.builder()
-//                .consumer(subscribe.getConsumer())
-//                .seller(subscribe.getSeller())
-//                .build();
-//    }
     public static SubscribeResponse toResponse(Member member) {
         return SubscribeResponse.builder()
                 .userId(member.getUserId())

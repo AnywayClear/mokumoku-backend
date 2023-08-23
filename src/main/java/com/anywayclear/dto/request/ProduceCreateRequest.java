@@ -25,7 +25,6 @@ public class ProduceCreateRequest {
     @NotNull
     private int ea;
     @NotNull
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") // 기본 형태는 자동 바인딩
     private LocalDateTime startDate;
 
     @Builder

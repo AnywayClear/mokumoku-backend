@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auctions")
-//@Secured({"ROLE_CONSUMER", "ROLE_SELLER"})
 public class AuctionController {
     private final AuctionService auctionService;
 
@@ -27,22 +26,5 @@ public class AuctionController {
         String consumerId = (String) oAuth2User.getAttributes().get("userId");
         auctionService.checkAuctionFinished(auctionId);
         return ResponseEntity.ok(auctionService.Bidding(auctionId, consumerId, request));
-    }
-
-    /*폐기*/
-    @PatchMapping("/{auction-id}/status")
-    public ResponseEntity<Long> changeFinished(@PathVariable("auction-id") long auctionId) {
-        Long dealId = auctionService.changeFinished(auctionId);
-        return ResponseEntity.ok(dealId);
-    }
-
-    /*
-     * 테스트용
-     */
-    @PostMapping("/{auction-id}/test")
-    public ResponseEntity<BiddingResponse> test(
-            @PathVariable("auction-id") long auctionId,
-            @RequestBody BiddingRequest request) {
-        return ResponseEntity.ok(auctionService.autoBidding(auctionId, request));
     }
 }

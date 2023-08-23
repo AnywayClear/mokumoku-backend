@@ -151,7 +151,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             redisAuthenticatedUserTemplate.delete(userId);
             redisAuthenticatedUserTemplate.delete(accessToken);
 
-            // redis에 newAccessToken : refreshToken 저장
+            // redis에 user : new AccessToken / newAccessToken : refreshToken 저장
             redisAuthenticatedUserTemplate.opsForValue().set(userId, newAccessToken);
             redisAuthenticatedUserTemplate.opsForValue().set(newAccessToken, refreshToken);
             redisAuthenticatedUserTemplate.expire(newAccessToken, second * minute * hour, TimeUnit.MILLISECONDS);
