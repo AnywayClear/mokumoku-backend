@@ -33,10 +33,4 @@ public class NotificationController {
         String userId = (String) oAuth2User.getAttributes().get("userId");
         return ResponseEntity.ok(notificationService.getAlarmList(userId));
     }
-
-//    @PostMapping("/send-data")
-//    public void sendData(@AuthenticationPrincipal OAuth2User oAuth2User) {
-//        String userId = (String) oAuth2User.getAttributes().get("userId");
-//        notificationService.notifyTest(userId, "data");
-//    }
 }

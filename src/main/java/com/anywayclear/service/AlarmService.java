@@ -79,7 +79,6 @@ public class AlarmService  {
 
 
         // 503 에러 방지 - 더미 이벤트 전송
-//        sendToClient(emitter, userId, "Connected", "subscribe");
         try {
             emitter.send(SseEmitter.event()
                     .id(userId)

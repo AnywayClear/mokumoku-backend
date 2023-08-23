@@ -96,23 +96,4 @@ public class AuctionService {
         List<Auction> auctionList = auctionRepository.findAllByProduce(produce);
         return new AuctionResponseList(auctionList);
     }
-
-    /* 요청으로 불가해서 폐기 */
-    @Transactional
-    public Long changeFinished(long auctionId) {
-        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
-        auction.setClosed(true);
-        DealCreateRequest dealCreateRequest = DealCreateRequest.builder().endPrice(auction.getPrice()).consumer(memberRepository.findByNickname(auction.getNickname()).orElseThrow(() -> new CustomException(INVALID_MEMBER))).seller(auction.getProduce().getSeller()).produce(auction.getProduce()).build();
-        return dealService.createDeal(dealCreateRequest);
-    }
-
-    /**
-     * test용 - 자동 최소 비딩
-     */
-    @Transactional
-    public BiddingResponse autoBidding(long auctionId, BiddingRequest request) {
-        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new CustomException(INVALID_AUCTION_ID));
-        auction.setPrice(auction.getPrice() + 100);
-        return BiddingResponse.builder().price(request.getPrice()).build();
-    }
 }
