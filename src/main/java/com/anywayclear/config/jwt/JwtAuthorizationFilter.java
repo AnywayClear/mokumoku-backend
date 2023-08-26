@@ -26,10 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -49,19 +46,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         System.out.println("JwtAuthorizationFilter : JWT 유효성 검사");
 
-        // 특정 경로에 대한 요청이라면 JWT 검사를 하지 않음
-        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/api/produces")) {
-            if (!request.getRequestURI().startsWith("/api/produces/")) {
-                chain.doFilter(request, response);
-                return;
-            }
-        }
-
-        // aws target group health test 접근 허용
-        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/health-check")) {
-            chain.doFilter(request, response);
-            return;
-        }
+        if (isAllowed(request, response, chain)) return; // 특정 경로 요청 허용
 
         String jwtHeader = request.getHeader(jwtConfig.getHeader());
 
@@ -74,43 +59,72 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // JWT 유효성 검사
         String accessToken = request.getHeader(jwtConfig.getHeader()).replace(jwtConfig.getPrefix() + " ", "");
         try {
+
             String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(accessToken).getClaim("userId").asString();
             if (userId != null) {
-                try {
-                    Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("해당 JWT의 member가 없습니다. userId: " + userId));
+                Optional<Member> memberOptional = memberRepository.findByUserId(userId);
+                if (memberOptional.isPresent()) {
+                    Member member = memberOptional.get();
+
+                    // 회원 탈퇴 여부 확인
                     if (!member.isDeleted()) {
-                        if (checkDuplicatedLogin(userId, accessToken, response)) return; // 중복로그인 시 예외 처리
+                        // 중복 로그인 여부 확인
+                        if (checkDuplicatedLogin(userId, accessToken, response)) return;
                         saveMemberInSecurityContextHolder(member);
                         chain.doFilter(request, response);
                     } else {
                         sendJsonResponse(response, ExceptionCode.INVALID_DELETED_MEMBER); // 탈퇴한 회원 예외 처리
                     }
-                } catch (EntityNotFoundException ex) {
+
+                } else {
                     sendJsonResponse(response, ExceptionCode.INVALID_USER_ID); // 해당 userId의 회원이 없을 때 예외 처리
                 }
             } else {
                 sendJsonResponse(response, ExceptionCode.INVALID_TOKEN); // 복호화 했지만 userId 정보가 없는 잘못된 토큰 예외 처리
             }
+
+        // accessToken 만료
         } catch (TokenExpiredException ex) {
+
             //refreshToken 확인
             String refreshToken = getRefreshToken(accessToken);
             if (refreshToken != null) {
                 // accessToken 재발급
-                String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(refreshToken).getClaim("userId").asString();
-                String newAccessToken = createAccessToken(userId, accessToken,refreshToken,response);
-                if (newAccessToken != null) {
-                    System.out.println("accessToken 재발급");
-                    response.setHeader("newAccessToken", newAccessToken);
-                    chain.doFilter(request, response);
-                }
+                getNewAccessToken(request, response, chain, accessToken, refreshToken);
             } else {
-                // redis에 refreshToken없으면 만료된 토큰 처리
                 sendJsonResponse(response, ExceptionCode.INVALID_EXPIRED_TOKEN);
             }
+
+        // accessToken 디코딩 예회
         } catch (JWTDecodeException ex) {
-            // JWT 디코딩 예외 처리
             sendJsonResponse(response, ExceptionCode.INVALID_TOKEN);
         }
+    }
+
+    private void getNewAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain, String accessToken, String refreshToken) throws IOException, ServletException {
+        String userId = JWT.require(Algorithm.HMAC512(jwtConfig.getKey())).build().verify(refreshToken).getClaim("userId").asString();
+        String newAccessToken = createAccessToken(userId, accessToken, refreshToken, response);
+        if (newAccessToken != null) {
+            response.setHeader("newAccessToken", newAccessToken);
+            chain.doFilter(request, response);
+        }
+    }
+
+    private static boolean isAllowed(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // 상품 전체 조회 요청이라면 JWT 검사를 하지 않음
+        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/api/produces")) {
+            if (!request.getRequestURI().startsWith("/api/produces/")) {
+                chain.doFilter(request, response);
+                return true;
+            }
+        }
+
+        // aws target group health test 접근 허용
+        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/health-check")) {
+            chain.doFilter(request, response);
+            return true;
+        }
+        return false;
     }
 
     private boolean checkDuplicatedLogin(String userId, String token, HttpServletResponse response) throws IOException {
