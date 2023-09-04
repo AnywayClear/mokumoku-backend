@@ -31,7 +31,7 @@
 
 #### 시스템 아키텍처
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/게시판%20(1).png" alt="게시판 (1).png" width="698">
+<img title="" src="README_assets/게시판%20(1).png" alt="게시판 (1).png" width="698">
 
 #### CI /CD
 
