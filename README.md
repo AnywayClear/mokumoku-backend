@@ -1,4 +1,5 @@
 # mokumoku introduction
+
 [mokumoku Notion](https://www.notion.so/flowerdonk/MokuMoku-be09a1c30fb949b9a177d45280161d0a)
 
 # mokumoku Backend Server
@@ -27,5 +28,11 @@
 > - **Docker Compose로 Redis와 함께 배포**
 > 
 > - **RDB는 Amazon RDS MySQL 사용**
+
+#### 시스템 아키텍처
+
+<img title="" src="file:///C:/Users/SSAFY/Desktop/게시판%20(1).png" alt="게시판 (1).png" width="698">
+
+#### CI /CD
 
 <img title="" src="README_assets/2023-08-16-00-45-59-image.png" alt="" data-align="center" width="760">
